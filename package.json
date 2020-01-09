@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/nicoduj/homebridge-deebotEcovacs#readme",
   "devDependencies": {
-    "husky": "^3.0.3",
+    "husky": "^4.0.2",
     "prettier": "1.19.0",
     "pretty-quick": "^2.0.0"
   },
