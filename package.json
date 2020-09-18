@@ -25,7 +25,7 @@
     "homekit"
   ],
   "dependencies": {
-    "ecovacs-deebot": "^0.4.17",
+    "ecovacs-deebot": "^0.4.20",
     "node-machine-id": "^1.1.12"
   },
   "bugs": {
@@ -47,5 +47,15 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  }
+  },
+  "funding": [
+    {
+      "type" : "kofi",
+      "url" : "https://ko-fi.com/nico0089/"
+    },
+    {
+      "type" : "paypal",
+      "url" : "https://www.paypal.me/nicoduj/"
+    }
+  ]
 }
