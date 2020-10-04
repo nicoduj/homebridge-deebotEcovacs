@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.2.1
+
+- [NEW] bump dep on [js lib](https://github.com/mrbungle64/ecovacs-deebot.js) to support new deebot
+
 ## 1.2.0
 
 - [NEW] bump dep on [js lib](https://github.com/mrbungle64/ecovacs-deebot.js) to support new deebot and remove canvas dep
