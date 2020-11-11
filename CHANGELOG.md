@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.1
+
+- [FIX] Deebots needs attention was not correct
+
 ## 1.3.0
 
 - [NEW] swithches instead of direction and handling zones

@@ -140,12 +140,6 @@ DeebotEcovacsAPI.prototype = {
       this.log.debug('INFO - Clean status: %s', clean_status);
 
       if (clean_status) {
-        //reset last error
-        if (deebotAccessory.publishMotionDetector && HKMotionService) {
-          this.log.debug('INFO - Reset Motion Service');
-          HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-        }
-
         let cleaning = clean_status != 'stop' && clean_status != 'pause' && clean_status != 'idle';
 
         if (deebotAccessory.publishFan && HKFanService) {
@@ -182,19 +176,18 @@ DeebotEcovacsAPI.prototype = {
 
     vacBot.on('Error', (error_message) => {
       this.log.debug('INFO - Error from deebot : %s ', error_message);
-      if (error_message.indexOf('Timeout') > -1) {
-        //an order might have been lost, so we update
-        vacBot.run('GetCleanState');
-        vacBot.run('GetBatteryState');
-        vacBot.run('GetChargeState');
-        vacBot.run('GetCleanSpeed');
-      } else if (
-        deebotAccessory.publishMotionDetector &&
-        HKMotionService &&
-        error_message.indexOf('NoError') == -1
-      ) {
-        if (error_message)
-          HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
+      if (error_message) {
+        if (error_message.indexOf('Timeout') > -1) {
+          //an order might have been lost, so we update
+          vacBot.run('GetCleanState');
+          vacBot.run('GetBatteryState');
+          vacBot.run('GetChargeState');
+          vacBot.run('GetCleanSpeed');
+        } else if (deebotAccessory.publishMotionDetector && HKMotionService) {
+          let isOnError = error_message.indexOf('NoError') == -1;
+          this.log.debug('INFO - updating sensor : %s ', isOnError);
+          HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(isOnError);
+        }
       }
     });
 
