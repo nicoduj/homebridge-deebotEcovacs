@@ -27,7 +27,7 @@ The battery percentage / charging status is shown in the detail pane of each ser
 `npm install -g homebridge-deebotecovacs`
 
 **IMPORTANT**
-*This might not be needed anymore since 1.2.0*
+_This might not be needed anymore since 1.2.0_
 
 If you encounter any issue while installing, you might have to install additionnal packages on your environment since the main dependency of it depends on canvas library which is not available for all configurations. See there for more details : [canvas compiling](https://github.com/Automattic/node-canvas#compiling).
 
@@ -70,8 +70,9 @@ Fields:
 - `publishFan` Optional - defaults to true - Publish the fan that makes speed cleaning available
 - `publishSwitch` Optional - defaults to true - Publish the switch that makes on/off available
 - `publishMotionDetector` Optional - defaults to true - Publish the motion detector to be triggered in case of hep needed by your deebot
-- `leftDirectionCleaningMode` Optional - defaults to 'edge' - specify the mode on left ('edge','auto','zone') - empty both if you don't want to use
-- `rightDirectionCleaningMode` Optional - defaults to 'auto' - specify the mode on left ('edge','auto','zone') - empty both if you don't want to use
+- `publishAutoSwitch` Optional - Publish a switch to start in auto Mode.
+- `publishEdgeSwitch` Optional - Publish a switch to start in edge Mode.
+- `publishZoneSwitches` Optional - Publish switches to start for each zone. Must be something like [1,2,3]
 
 ## Changelog
 

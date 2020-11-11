@@ -140,27 +140,19 @@ DeebotEcovacsAPI.prototype = {
       this.log.debug('INFO - Clean status: %s', clean_status);
 
       if (clean_status) {
+        //reset last error
+        if (deebotAccessory.publishMotionDetector && HKMotionService) {
+          this.log.debug('INFO - Reset Motion Service');
+          HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
+        }
+
         let cleaning = clean_status != 'stop' && clean_status != 'pause' && clean_status != 'idle';
 
         if (deebotAccessory.publishFan && HKFanService) {
           let currentOnValue = HKFanService.getCharacteristic(Characteristic.On).value;
           if (currentOnValue !== cleaning) {
             HKFanService.getCharacteristic(Characteristic.On).updateValue(cleaning);
-          }
-
-          let currentDirectionValue = HKFanService.getCharacteristic(
-            Characteristic.RotationDirection
-          ).value;
-          if (
-            clean_status == deebotAccessory.leftDirectionCleaningMode &&
-            currentDirectionValue == 0
-          ) {
-            HKFanService.getCharacteristic(Characteristic.RotationDirection).updateValue(0);
-          } else if (
-            clean_status != deebotAccessory.leftDirectionCleaningMode &&
-            currentDirectionValue == 1
-          ) {
-            HKFanService.getCharacteristic(Characteristic.RotationDirection).updateValue(1);
+            vacBot.run('GetCleanSpeed'); // to update speed accordingly.
           }
         }
 
@@ -169,6 +161,8 @@ DeebotEcovacsAPI.prototype = {
           if (cleaning && !currentMainOnValue)
             HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(true);
         }
+
+        //could handle clean status to update switches .... (zone ???)
       }
     });
 
@@ -188,7 +182,17 @@ DeebotEcovacsAPI.prototype = {
 
     vacBot.on('Error', (error_message) => {
       this.log.debug('INFO - Error from deebot : %s ', error_message);
-      if (deebotAccessory.publishMotionDetector && HKMotionService) {
+      if (error_message.indexOf('Timeout') > -1) {
+        //an order might have been lost, so we update
+        vacBot.run('GetCleanState');
+        vacBot.run('GetBatteryState');
+        vacBot.run('GetChargeState');
+        vacBot.run('GetCleanSpeed');
+      } else if (
+        deebotAccessory.publishMotionDetector &&
+        HKMotionService &&
+        error_message.indexOf('NoError') == -1
+      ) {
         if (error_message)
           HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
       }

@@ -154,17 +154,25 @@
         "default": true,
         "description": "Provides trouble notifications for your Deebot as a motion alert."
       },
-      "rightDirectionCleaningMode": {
-        "title": "Cleaning Mode – Counterclockwise",
-        "type": "string",
-        "default": "auto",
-        "description": "Set the cleaning mode for the counterclockwise fan direction. Default is auto.  (edge OR auto OR spot OR spotArea,start,1 (or any other spot number) OR customArea,start,1,1 (or any other area number and number of cleanings) "
+      "publishAutoSwitch": {
+        "title": "Publish Auto Cleaning Switch",
+        "type": "boolean",
+        "default": true,
+        "description": "Start cleaning in auto mode"
       },
-      "leftDirectionCleaningMode": {
-        "title": "Cleaning Mode – Clockwise",
-        "type": "string",
-        "default": "edge",
-        "description": "Set the cleaning mode for the clockwise fan direction. Default is auto. (edge OR auto OR spot OR spotArea,start,1 (or any other spot number) OR customArea,start,1,1 (or any other area number and number of cleanings) "
+      "publishEdgeSwitch": {
+        "title": "Publish Edge Cleaning Switch",
+        "type": "boolean",
+        "default": true,
+        "description": "Start cleaning in edge mode"
+      },
+      "publishZoneSwitches": {
+        "title": "Publish Zone Cleaning Switchs",
+        "type": "array",
+        "items": {
+          "title": "Zone  number",
+          "type": "integer"
+        }
       }
     }
   },

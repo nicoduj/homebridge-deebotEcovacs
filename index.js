@@ -48,8 +48,12 @@ function myDeebotEcovacsPlatform(log, config, api) {
   this.publishSwitch = checkParameter(config['publishSwitch'], true);
   this.publishFan = checkParameter(config['publishFan'], true);
   this.publishMotionDetector = checkParameter(config['publishMotionDetector'], true);
-  this.leftDirectionCleaningMode = checkParameter(config['leftDirectionCleaningMode'], 'edge');
-  this.rightDirectionCleaningMode = checkParameter(config['rightDirectionCleaningMode'], 'auto');
+
+  this.publishAutoSwitch = checkParameter(config['publishAutoSwitch'], false);
+  this.publishEdgeSwitch = checkParameter(config['publishEdgeSwitch'], false);
+  this.publishZoneSwitches = config['publishZoneSwitches'];
+
+  this.defaultOrder = ['Clean', 'auto'];
 
   this.foundAccessories = [];
   this.deebotEcovacsAPI = new DeebotEcovacsAPI(log, this);
@@ -264,14 +268,6 @@ myDeebotEcovacsPlatform.prototype = {
 
           this.bindOnCharacteristic(myDeebotEcovacsAccessory, HKFanService);
           this.bindRotationSpeedCharacteristic(myDeebotEcovacsAccessory, HKFanService);
-          if (
-            this.leftDirectionCleaningMode &&
-            this.leftDirectionCleaningMode != '' &&
-            this.rightDirectionCleaningMode &&
-            this.rightDirectionCleaningMode != ''
-          )
-            this.bindRotationDirectionCharacteristic(myDeebotEcovacsAccessory, HKFanService);
-
           HKFanService.setPrimaryService(true);
           this._confirmedServices.push(HKFanService);
         }
@@ -333,6 +329,82 @@ myDeebotEcovacsPlatform.prototype = {
           }
           this.bindMotionCharacteristic(HKMotionService);
           this._confirmedServices.push(HKMotionService);
+        }
+
+        if (this.publishAutoSwitch) {
+          let HKSwitchAutoService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+            'Auto ' + deebotName,
+            'SwitchAutoService' + deebotName
+          );
+
+          if (!HKSwitchAutoService) {
+            this.log('INFO - Creating Auto stateless Switch Service ' + deebotName);
+            HKSwitchAutoService = new Service.Switch(
+              'Auto ' + deebotName,
+              'SwitchAutoService' + deebotName
+            );
+            HKSwitchAutoService.subtype = 'SwitchAutoService' + deebotName;
+            myDeebotEcovacsAccessory.addService(HKSwitchAutoService);
+          }
+          this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchAutoService, [
+            'Clean',
+            'auto',
+          ]);
+          this._confirmedServices.push(HKSwitchAutoService);
+        }
+
+        if (this.publishEdgeSwitch) {
+          let HKSwitchEdgeService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+            'Edge ' + deebotName,
+            'SwitchEdgeService' + deebotName
+          );
+
+          if (!HKSwitchEdgeService) {
+            this.log('INFO - Creating Edge stateless Switch Service ' + deebotName);
+            HKSwitchEdgeService = new Service.Switch(
+              'Edge ' + deebotName,
+              'SwitchEdgeService' + deebotName
+            );
+            HKSwitchEdgeService.subtype = 'SwitchEdgeService' + deebotName;
+            myDeebotEcovacsAccessory.addService(HKSwitchEdgeService);
+          }
+          this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchEdgeService, [
+            'Clean',
+            'edge',
+          ]);
+          this._confirmedServices.push(HKSwitchEdgeService);
+        }
+
+        if (this.publishZoneSwitches !== undefined) {
+          for (let i = 0; i < this.publishZoneSwitches.length; i++) {
+            let HKSwitchZoneService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+              'Zone ' + this.publishZoneSwitches[i] + ' ' + deebotName,
+              'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName
+            );
+
+            if (!HKSwitchZoneService) {
+              this.log(
+                'INFO - Creating Zone ' +
+                  this.publishZoneSwitches[i] +
+                  ' stateless Switch Service ' +
+                  deebotName
+              );
+              HKSwitchZoneService = new Service.Switch(
+                'Zone ' + this.publishZoneSwitches[i] + ' ' + deebotName,
+                'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName
+              );
+              HKSwitchZoneService.subtype =
+                'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName;
+              myDeebotEcovacsAccessory.addService(HKSwitchZoneService);
+            }
+
+            this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchZoneService, [
+              'Clean',
+              'spot_area',
+              this.publishZoneSwitches[i],
+            ]);
+            this._confirmedServices.push(HKSwitchZoneService);
+          }
         }
 
         this.deebotEcovacsAPI.configureEvents(
@@ -430,22 +502,28 @@ myDeebotEcovacsPlatform.prototype = {
     callback(undefined, cleaning);
   },
 
-  getOrder(currentDirectionValue) {
-    var orderToSend = ['clean'];
+  setDeebotEcovacsOrderCharacteristic: function (
+    homebridgeAccessory,
+    characteristic,
+    orderToSend,
+    callback
+  ) {
+    this.lastOrder = orderToSend;
 
-    if (currentDirectionValue == 1) {
-      let order = this.leftDirectionCleaningMode.split(',');
-      if (order[0].toLowerCase() == 'auto')
-        orderToSend = orderToSend.concat(this.leftDirectionCleaningMode.split(','));
-      else orderToSend = this.leftDirectionCleaningMode.split(',');
+    this.log.debug('INFO - setDeebotEcovacsOrderCharacteristic -' + orderToSend);
+
+    if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
+      homebridgeAccessory.vacBot.run.apply(homebridgeAccessory.vacBot, orderToSend);
     } else {
-      let order = this.rightDirectionCleaningMode.split(',');
-      if (order[0].toLowerCase() == 'auto')
-        orderToSend = orderToSend.concat(this.rightDirectionCleaningMode.split(','));
-      else orderToSend = this.rightDirectionCleaningMode.split(',');
+      homebridgeAccessory.vacBot.orderToSend = orderToSend;
+      homebridgeAccessory.vacBot.connect_and_wait_until_ready();
     }
 
-    return orderToSend;
+    setTimeout(function () {
+      characteristic.updateValue(false);
+    }, 200);
+
+    callback();
   },
 
   setDeebotEcovacsOnCharacteristic: function (homebridgeAccessory, service, value, callback) {
@@ -457,60 +535,12 @@ myDeebotEcovacsPlatform.prototype = {
       if (service.type == 'fan') orderToSend = ['Stop'];
 
       if (value == 1) {
-        //need to find FAN Service
-        let HKFanService = service;
-        let currentDirectionValue = 0;
-        if (service.type != 'fan')
-          HKFanService = homebridgeAccessory.getServiceByUUIDAndSubType(
-            'Start/Pause ' + homebridgeAccessory.name,
-            'FanService' + homebridgeAccessory.name
-          );
-        if (HKFanService)
-          currentDirectionValue = HKFanService.getCharacteristic(Characteristic.RotationDirection)
-            .value;
-
-        orderToSend = this.getOrder(currentDirectionValue);
+        orderToSend = this.lastOrder ? this.lastOrder : this.defaultOrder;
       }
 
       this.log.debug(
         'INFO - setDeebotEcovacsOnCharacteristic -' + value + '-' + currentState + '-' + orderToSend
       );
-
-      if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
-        homebridgeAccessory.vacBot.run.apply(homebridgeAccessory.vacBot, orderToSend);
-      } else {
-        homebridgeAccessory.vacBot.orderToSend = orderToSend;
-        homebridgeAccessory.vacBot.connect_and_wait_until_ready();
-      }
-    }
-
-    callback();
-  },
-
-  getDeebotEcovacsModeCharacteristic: function (service, callback) {
-    this.log.debug('INFO - getDeebotEcovacsModeCharacteristic');
-
-    //don't call GetCleanState since on charac update will handle all
-    var mode = service.getCharacteristic(Characteristic.RotationDirection).value;
-    callback(undefined, mode);
-  },
-
-  setDeebotEcovacsModeCharacteristic: function (homebridgeAccessory, service, value, callback) {
-    let currentDirectionValue = service.getCharacteristic(Characteristic.RotationDirection).value;
-
-    let isOn = service.getCharacteristic(Characteristic.On).value;
-
-    this.log.debug(
-      'INFO - setDeebotEcovacsModeCharacteristic -' +
-        value +
-        '-' +
-        currentDirectionValue +
-        '-' +
-        isOn
-    );
-
-    if (currentDirectionValue !== value && isOn) {
-      let orderToSend = this.getOrder(currentDirectionValue);
 
       if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
         homebridgeAccessory.vacBot.run.apply(homebridgeAccessory.vacBot, orderToSend);
@@ -532,21 +562,26 @@ myDeebotEcovacsPlatform.prototype = {
     callback(undefined, speed);
   },
   setDeebotEcovacsSpeedCharacteristic: function (homebridgeAccessory, service, value, callback) {
-    let speed = this.getCleanSpeed(value);
-    let currentSpeedValue = service.getCharacteristic(Characteristic.RotationSpeed).value;
-    let deebotSpeed = this.getCleanSpeed(currentSpeedValue);
-    this.log.debug('INFO - setDeebotEcovacsSpeedCharacteristic -' + speed + '-' + deebotSpeed);
+    //we delay a bit if we go to pause
+    setTimeout(() => {
+      if (service.getCharacteristic(Characteristic.On)) {
+        let speed = this.getCleanSpeed(value);
+        let currentSpeedValue = service.getCharacteristic(Characteristic.RotationSpeed).value;
+        let deebotSpeed = this.getCleanSpeed(currentSpeedValue);
+        this.log.debug('INFO - setDeebotEcovacsSpeedCharacteristic -' + speed + '-' + deebotSpeed);
 
-    if (deebotSpeed !== speed) {
-      let orderToSend = ['SetCleanSpeed', '' + speed];
+        if (deebotSpeed !== speed) {
+          let orderToSend = ['SetCleanSpeed', '' + speed];
 
-      if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
-        homebridgeAccessory.vacBot.run.apply(homebridgeAccessory.vacBot, orderToSend);
-      } else {
-        homebridgeAccessory.vacBot.orderToSend = orderToSend;
-        homebridgeAccessory.vacBot.connect_and_wait_until_ready();
+          if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
+            homebridgeAccessory.vacBot.run.apply(homebridgeAccessory.vacBot, orderToSend);
+          } else {
+            homebridgeAccessory.vacBot.orderToSend = orderToSend;
+            homebridgeAccessory.vacBot.connect_and_wait_until_ready();
+          }
+        }
       }
-    }
+    }, 1000);
 
     callback();
   },
@@ -612,23 +647,6 @@ myDeebotEcovacsPlatform.prototype = {
       );
   },
 
-  bindRotationDirectionCharacteristic(homebridgeAccessory, service) {
-    service
-      .getCharacteristic(Characteristic.RotationDirection)
-      .on(
-        'get',
-        function (callback) {
-          this.getDeebotEcovacsModeCharacteristic(service, callback);
-        }.bind(this)
-      )
-      .on(
-        'set',
-        function (value, callback) {
-          this.setDeebotEcovacsModeCharacteristic(homebridgeAccessory, service, value, callback);
-        }.bind(this)
-      );
-  },
-
   bindRotationSpeedCharacteristic(homebridgeAccessory, service) {
     service
       .getCharacteristic(Characteristic.RotationSpeed)
@@ -659,6 +677,28 @@ myDeebotEcovacsPlatform.prototype = {
         'set',
         function (value, callback) {
           this.setDeebotEcovacsOnCharacteristic(homebridgeAccessory, service, value, callback);
+        }.bind(this)
+      );
+  },
+
+  bindSwitchOrderCharacteristic(homebridgeAccessory, service, orderToSend) {
+    service
+      .getCharacteristic(Characteristic.On)
+      .on(
+        'get',
+        function (callback) {
+          callback(false);
+        }.bind(this)
+      )
+      .on(
+        'set',
+        function (value, callback) {
+          this.setDeebotEcovacsOrderCharacteristic(
+            homebridgeAccessory,
+            service.getCharacteristic(Characteristic.On),
+            orderToSend,
+            callback
+          );
         }.bind(this)
       );
   },

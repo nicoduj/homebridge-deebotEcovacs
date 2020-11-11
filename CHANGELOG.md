@@ -17,6 +17,12 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.0
+
+- [NEW] swithches instead of direction and handling zones
+- [FIX] Deebots needs attention does not reset #34
+- [FIX] bump dep for Ozmo T8 #36
+
 ## 1.2.1
 
 - [NEW] bump dep on [js lib](https://github.com/mrbungle64/ecovacs-deebot.js) to support new deebot
