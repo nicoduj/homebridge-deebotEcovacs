@@ -212,7 +212,8 @@ myDeebotEcovacsPlatform.prototype = {
         let deebotName = vacBot.vacuum.nick ? vacBot.vacuum.nick : vacBot.vacuum.name;
         this.log('INFO - Discovered Deebot : ' + deebotName);
 
-        this.log('INFO - Edge Cleaning  : ' + vacBot.hasEdgeCleaningMode());
+        //hasEdgeCleaningMode() not implemented for 950 based models
+        this.log('INFO - Edge Cleaning  : ' + !this.hasSpotAreaCleaningMode());
         this.log('INFO - Spot Cleaning  : ' + vacBot.hasSpotCleaningMode());
         this.log('INFO - SpotArea Cleaning  : ' + vacBot.hasSpotAreaCleaningMode());
         this.log('INFO - CustomArea Cleaning  : ' + vacBot.hasCustomAreaCleaningMode());
@@ -360,7 +361,7 @@ myDeebotEcovacsPlatform.prototype = {
           this._confirmedServices.push(HKSwitchAutoService);
         }
 
-        if (this.publishEdgeSwitch && vacBot.hasEdgeCleaningMode()) {
+        if (this.publishEdgeSwitch && !this.hasSpotAreaCleaningMode()) {
           let HKSwitchEdgeService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
             'Edge ' + deebotName,
             'SwitchEdgeService' + deebotName

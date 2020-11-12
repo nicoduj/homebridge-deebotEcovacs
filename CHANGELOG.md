@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.3
+
+- [FIX] crash for 950 models
+
 ## 1.3.2
 
 - [FIX] Using two DeebotSlim with the plugin #37 (not sur it is fixed)
