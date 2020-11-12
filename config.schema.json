@@ -166,12 +166,26 @@
         "default": true,
         "description": "Start cleaning in edge mode"
       },
-      "publishZoneSwitches": {
-        "title": "Publish Zone Cleaning Switchs",
+      "publishSpotSwitch": {
+        "title": "Publish Spot Cleaning Switch",
+        "type": "boolean",
+        "default": true,
+        "description": "Start cleaning in spot mode"
+      },
+      "publishSpotAreaSwitches": {
+        "title": "Publish SpotArea Cleaning Switchs",
         "type": "array",
         "items": {
-          "title": "Zone  number",
-          "type": "integer"
+          "title": "SpotArea numbers, comma separated",
+          "type": "string"
+        }
+      },
+      "publishCustomAreaSwitches": {
+        "title": "Publish CustomArea Cleaning Switchs",
+        "type": "array",
+        "items": {
+          "title": "SpotArea coordinates like - (x1,y1,x2,y2) - ",
+          "type": "string"
         }
       }
     }

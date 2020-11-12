@@ -72,7 +72,11 @@ Fields:
 - `publishMotionDetector` Optional - defaults to true - Publish the motion detector to be triggered in case of hep needed by your deebot
 - `publishAutoSwitch` Optional - Publish a switch to start in auto Mode.
 - `publishEdgeSwitch` Optional - Publish a switch to start in edge Mode.
-- `publishZoneSwitches` Optional - Publish switches to start for each zone. Must be something like [1,2,3]
+- `publishSpotSwitch` Optional - Publish a switch to start in spot Mode.
+- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"]
+- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["(x1,y1,x2,y2)","(x1,y1,x2,y2)"]
+
+See : https://github.com/mrbungle64/ecovacs-deebot.js/wiki/Clean-modes
 
 ## Changelog
 

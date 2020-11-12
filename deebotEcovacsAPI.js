@@ -156,7 +156,7 @@ DeebotEcovacsAPI.prototype = {
             HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(true);
         }
 
-        //could handle clean status to update switches .... (zone ???)
+        //could handle clean status to update switches .... (spotArea, cleaning mode ... ???)
       }
     });
 

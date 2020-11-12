@@ -51,7 +51,9 @@ function myDeebotEcovacsPlatform(log, config, api) {
 
   this.publishAutoSwitch = checkParameter(config['publishAutoSwitch'], false);
   this.publishEdgeSwitch = checkParameter(config['publishEdgeSwitch'], false);
-  this.publishZoneSwitches = config['publishZoneSwitches'];
+  this.publishSpotSwitch = checkParameter(config['publishSpotSwitch'], false);
+  this.publishSpotAreaSwitches = config['publishSpotAreaSwitches'];
+  this.publishCustomAreaSwitches = config['publishCustomAreaSwitches'];
 
   this.defaultOrder = ['Clean', 'auto'];
 
@@ -205,10 +207,15 @@ myDeebotEcovacsPlatform.prototype = {
   loadDeebots: function () {
     if (this.deebotEcovacsAPI.vacbots) {
       for (let s = 0; s < this.deebotEcovacsAPI.vacbots.length; s++) {
-        var vacBot = this.deebotEcovacsAPI.vacbots[s];
+        let vacBot = this.deebotEcovacsAPI.vacbots[s];
 
         let deebotName = vacBot.vacuum.nick ? vacBot.vacuum.nick : vacBot.vacuum.name;
         this.log('INFO - Discovered Deebot : ' + deebotName);
+
+        this.log('INFO - Edge Cleaning  : ' + vacBot.hasEdgeCleaningMode());
+        this.log('INFO - Spot Cleaning  : ' + vacBot.hasSpotCleaningMode());
+        this.log('INFO - SpotArea Cleaning  : ' + vacBot.hasSpotAreaCleaningMode());
+        this.log('INFO - CustomArea Cleaning  : ' + vacBot.hasCustomAreaCleaningMode());
 
         let uuid = UUIDGen.generate(deebotName);
         let myDeebotEcovacsAccessory = this.foundAccessories.find((x) => x.UUID == uuid);
@@ -233,7 +240,7 @@ myDeebotEcovacsPlatform.prototype = {
         myDeebotEcovacsAccessory.vacBot = vacBot;
         myDeebotEcovacsAccessory.name = deebotName;
 
-        var HKBatteryService, HKFanService, HKSwitchOnService, HKSwitchBipService, HKMotionService;
+        let HKBatteryService, HKFanService, HKSwitchOnService, HKSwitchBipService, HKMotionService;
 
         HKBatteryService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
           deebotName,
@@ -353,7 +360,7 @@ myDeebotEcovacsPlatform.prototype = {
           this._confirmedServices.push(HKSwitchAutoService);
         }
 
-        if (this.publishEdgeSwitch) {
+        if (this.publishEdgeSwitch && vacBot.hasEdgeCleaningMode()) {
           let HKSwitchEdgeService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
             'Edge ' + deebotName,
             'SwitchEdgeService' + deebotName
@@ -369,41 +376,94 @@ myDeebotEcovacsPlatform.prototype = {
             myDeebotEcovacsAccessory.addService(HKSwitchEdgeService);
           }
           this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchEdgeService, [
-            'Clean',
-            'edge',
+            'Edge',
           ]);
+
           this._confirmedServices.push(HKSwitchEdgeService);
         }
 
-        if (this.publishZoneSwitches !== undefined) {
-          for (let i = 0; i < this.publishZoneSwitches.length; i++) {
-            let HKSwitchZoneService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
-              'Zone ' + this.publishZoneSwitches[i] + ' ' + deebotName,
-              'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName
+        if (this.publishSpotSwitch && vacBot.hasSpotCleaningMode()) {
+          let HKSwitchSpotService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+            'Spot ' + deebotName,
+            'SwitchSpotService' + deebotName
+          );
+
+          if (!HKSwitchSpotService) {
+            this.log('INFO - Creating Spot stateless Switch Service ' + deebotName);
+            HKSwitchSpotService = new Service.Switch(
+              'Spot ' + deebotName,
+              'SwitchSpotService' + deebotName
+            );
+            HKSwitchSpotService.subtype = 'SwitchSpotService' + deebotName;
+            myDeebotEcovacsAccessory.addService(HKSwitchSpotService);
+          }
+          this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchSpotService, [
+            'Spot',
+          ]);
+          this._confirmedServices.push(HKSwitchSpotService);
+        }
+
+        if (this.publishSpotAreaSwitches !== undefined && vacBot.hasSpotAreaCleaningMode()) {
+          for (let i = 0; i < this.publishSpotAreaSwitches.length; i++) {
+            let HKSwitchSpotAreaService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+              'SpotArea ' + this.publishSpotAreaSwitches[i] + ' ' + deebotName,
+              'SwitchSpotAreaService' + this.publishSpotAreaSwitches[i] + deebotName
             );
 
-            if (!HKSwitchZoneService) {
+            if (!HKSwitchSpotAreaService) {
               this.log(
-                'INFO - Creating Zone ' +
-                  this.publishZoneSwitches[i] +
+                'INFO - Creating SpotArea ' +
+                  this.publishSpotAreaSwitches[i] +
                   ' stateless Switch Service ' +
                   deebotName
               );
-              HKSwitchZoneService = new Service.Switch(
-                'Zone ' + this.publishZoneSwitches[i] + ' ' + deebotName,
-                'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName
+              HKSwitchSpotAreaService = new Service.Switch(
+                'SpotArea ' + this.publishSpotAreaSwitches[i] + ' ' + deebotName,
+                'SwitchSpotAreaService' + this.publishSpotAreaSwitches[i] + deebotName
               );
-              HKSwitchZoneService.subtype =
-                'SwitchZoneService' + this.publishZoneSwitches[i] + deebotName;
-              myDeebotEcovacsAccessory.addService(HKSwitchZoneService);
+              HKSwitchSpotAreaService.subtype =
+                'SwitchSpotAreaService' + this.publishSpotAreaSwitches[i] + deebotName;
+              myDeebotEcovacsAccessory.addService(HKSwitchSpotAreaService);
             }
 
-            this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchZoneService, [
-              'Clean',
-              'spot_area',
-              this.publishZoneSwitches[i],
+            this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchSpotAreaService, [
+              'SpotArea',
+              'start',
+              this.publishSpotAreaSwitches[i],
             ]);
-            this._confirmedServices.push(HKSwitchZoneService);
+            this._confirmedServices.push(HKSwitchSpotAreaService);
+          }
+        }
+
+        if (this.publishCustomAreaSwitches !== undefined && vacBot.hasCustomAreaCleaningMode()) {
+          for (let i = 0; i < this.publishCustomAreaSwitches.length; i++) {
+            let HKSwitchCustomAreaService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+              'CustomArea ' + this.publishCustomAreaSwitches[i] + ' ' + deebotName,
+              'SwitchCustomAreaService' + this.publishCustomAreaSwitches[i] + deebotName
+            );
+
+            if (!HKSwitchCustomAreaService) {
+              this.log(
+                'INFO - Creating CustomArea ' +
+                  this.publishCustomAreaSwitches[i] +
+                  ' stateless Switch Service ' +
+                  deebotName
+              );
+              HKSwitchCustomAreaService = new Service.Switch(
+                'CustomArea ' + this.publishCustomAreaSwitches[i] + ' ' + deebotName,
+                'SwitchCustomAreaService' + this.publishCustomAreaSwitches[i] + deebotName
+              );
+              HKSwitchCustomAreaService.subtype =
+                'SwitchCustomAreaService' + this.publishCustomAreaSwitches[i] + deebotName;
+              myDeebotEcovacsAccessory.addService(HKSwitchCustomAreaService);
+            }
+
+            this.bindSwitchOrderCharacteristic(
+              myDeebotEcovacsAccessory,
+              HKSwitchCustomAreaService,
+              ['CustomArea', 'start', this.publishCustomAreaSwitches[i], 1]
+            );
+            this._confirmedServices.push(HKSwitchCustomAreaService);
           }
         }
 

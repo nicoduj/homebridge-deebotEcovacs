@@ -17,6 +17,12 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.2
+
+- [FIX] Using two DeebotSlim with the plugin #37 (not sur it is fixed)
+- [FIX] New publish zone function #38
+- [NEW] Adding Spot and CustomArea commands
+
 ## 1.3.1
 
 - [FIX] Deebots needs attention was not correct
