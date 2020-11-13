@@ -17,6 +17,11 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.5
+
+- [FIX] more logs and code refactor for potential fix for #37 (multiple deebots)
+- [FIX] option to specifiy SpotArea/CustomArea per deebot in case of multiple ones.
+
 ## 1.3.4
 
 - [FIX] bump dep

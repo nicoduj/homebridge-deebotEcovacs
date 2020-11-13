@@ -61,17 +61,13 @@ DeebotEcovacsAPI.prototype = {
       });
   },
 
-  configureEvents(
-    vacBot,
-    HKBatteryService,
-    HKFanService,
-    HKSwitchOnService,
-    HKMotionService,
-    deebotAccessory
-  ) {
+  configureEvents: function (deebotAccessory) {
     var Characteristic = this.platform.api.hap.Characteristic;
+
+    var vacBot = deebotAccessory.vacBot;
+
     vacBot.on('ready', (event) => {
-      this.log.debug('INFO - Vacbot ready: ' + JSON.stringify(event));
+      this.log.debug('INFO - Vacbot ' + deebotAccessory.name + ' ready: ' + JSON.stringify(event));
 
       vacBot.run('GetCleanState');
       vacBot.run('GetBatteryState');
@@ -79,7 +75,7 @@ DeebotEcovacsAPI.prototype = {
       vacBot.run('GetCleanSpeed');
 
       if (vacBot.orderToSend && vacBot.orderToSend !== undefined) {
-        this.log('INFO - sendingCommand ' + vacBot.orderToSend);
+        this.log('INFO - sendingCommand ' + vacBot.orderToSend + ' to ' + deebotAccessory.name);
 
         if (vacBot.orderToSend instanceof Array) {
           vacBot.run.apply(vacBot, orderToSend);
@@ -93,15 +89,29 @@ DeebotEcovacsAPI.prototype = {
 
     vacBot.on('BatteryInfo', (battery) => {
       let batteryLevel = this.platform.getBatteryLevel(battery);
-      let currentValue = HKBatteryService.getCharacteristic(Characteristic.BatteryLevel).value;
+      let currentValue = deebotAccessory.HKBatteryService.getCharacteristic(
+        Characteristic.BatteryLevel
+      ).value;
 
-      this.log.debug('INFO - Battery level: %d %d %d', battery, batteryLevel, currentValue);
+      this.log.debug(
+        'INFO - Battery level for ' + deebotAccessory.name + ' : %d %d %d',
+        battery,
+        batteryLevel,
+        currentValue
+      );
 
       if (currentValue !== batteryLevel) {
-        HKBatteryService.getCharacteristic(Characteristic.BatteryLevel).updateValue(batteryLevel);
+        deebotAccessory.HKBatteryService.getCharacteristic(Characteristic.BatteryLevel).updateValue(
+          batteryLevel
+        );
         if (batteryLevel < 20)
-          HKBatteryService.getCharacteristic(Characteristic.StatusLowBattery).updateValue(1);
-        else HKBatteryService.getCharacteristic(Characteristic.StatusLowBattery).updateValue(0);
+          deebotAccessory.HKBatteryService.getCharacteristic(
+            Characteristic.StatusLowBattery
+          ).updateValue(1);
+        else
+          deebotAccessory.HKBatteryService.getCharacteristic(
+            Characteristic.StatusLowBattery
+          ).updateValue(0);
       }
     });
 
@@ -109,51 +119,68 @@ DeebotEcovacsAPI.prototype = {
       let charging = charge_status == 'charging';
       let idle = charge_status == 'idle';
       let returning = charge_status == 'returning';
-      this.log.debug('INFO - Charge status: %s %s %s', charge_status, idle, charging);
+      this.log.debug(
+        'INFO - Charge status for ' + deebotAccessory.name + ' : %s %s %s',
+        charge_status,
+        idle,
+        charging
+      );
 
-      let currentValue = HKBatteryService.getCharacteristic(Characteristic.ChargingState).value;
+      let currentValue = deebotAccessory.HKBatteryService.getCharacteristic(
+        Characteristic.ChargingState
+      ).value;
 
       if (currentValue !== charging) {
-        HKBatteryService.getCharacteristic(Characteristic.ChargingState).updateValue(charging);
+        deebotAccessory.HKBatteryService.getCharacteristic(
+          Characteristic.ChargingState
+        ).updateValue(charging);
       }
 
-      if (deebotAccessory.publishFan && HKFanService) {
-        let currentOnValue = HKFanService.getCharacteristic(Characteristic.On).value;
+      if (deebotAccessory.HKFanService != undefined) {
+        let currentOnValue = deebotAccessory.HKFanService.getCharacteristic(Characteristic.On)
+          .value;
         if (charging && currentOnValue) {
-          HKFanService.getCharacteristic(Characteristic.On).updateValue(false);
+          deebotAccessory.HKFanService.getCharacteristic(Characteristic.On).updateValue(false);
         } else if (returning && !currentOnValue) {
-          HKFanService.getCharacteristic(Characteristic.On).updateValue(true);
+          deebotAccessory.HKFanService.getCharacteristic(Characteristic.On).updateValue(true);
         }
       }
 
-      if (deebotAccessory.publishSwitch && HKSwitchOnService) {
-        let currentMainOnValue = HKSwitchOnService.getCharacteristic(Characteristic.On).value;
+      if (deebotAccessory.HKSwitchOnService != undefined) {
+        let currentMainOnValue = deebotAccessory.HKSwitchOnService.getCharacteristic(
+          Characteristic.On
+        ).value;
         if (charging && currentMainOnValue) {
-          HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(false);
+          deebotAccessory.HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(false);
         } else if (idle && !currentMainOnValue) {
-          HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(true);
+          deebotAccessory.HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(true);
         }
       }
     });
 
     vacBot.on('CleanReport', (clean_status) => {
-      this.log.debug('INFO - Clean status: %s', clean_status);
+      this.log.debug('INFO - Clean status for ' + deebotAccessory.name + ' : %s', clean_status);
 
       if (clean_status) {
         let cleaning = clean_status != 'stop' && clean_status != 'pause' && clean_status != 'idle';
 
-        if (deebotAccessory.publishFan && HKFanService) {
-          let currentOnValue = HKFanService.getCharacteristic(Characteristic.On).value;
+        if (deebotAccessory.HKFanService != undefined) {
+          let currentOnValue = deebotAccessory.HKFanService.getCharacteristic(Characteristic.On)
+            .value;
           if (currentOnValue !== cleaning) {
-            HKFanService.getCharacteristic(Characteristic.On).updateValue(cleaning);
+            deebotAccessory.HKFanService.getCharacteristic(Characteristic.On).updateValue(cleaning);
             vacBot.run('GetCleanSpeed'); // to update speed accordingly.
           }
         }
 
-        if (deebotAccessory.publishSwitch && HKSwitchOnService) {
-          let currentMainOnValue = HKSwitchOnService.getCharacteristic(Characteristic.On).value;
+        if (deebotAccessory.HKSwitchOnService) {
+          let currentMainOnValue = deebotAccessory.HKSwitchOnService.getCharacteristic(
+            Characteristic.On
+          ).value;
           if (cleaning && !currentMainOnValue)
-            HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(true);
+            deebotAccessory.HKSwitchOnService.getCharacteristic(Characteristic.On).updateValue(
+              true
+            );
         }
 
         //could handle clean status to update switches .... (spotArea, cleaning mode ... ???)
@@ -161,21 +188,29 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('CleanSpeed', (clean_speed) => {
-      if (deebotAccessory.publishFan && HKFanService) {
-        let currentSpeedValue = HKFanService.getCharacteristic(Characteristic.RotationSpeed).value;
+      if (deebotAccessory.HKFanService != undefined) {
+        let currentSpeedValue = deebotAccessory.HKFanService.getCharacteristic(
+          Characteristic.RotationSpeed
+        ).value;
         let deebotSpeed = this.platform.getCleanSpeed(currentSpeedValue);
 
-        this.log.debug('INFO - Clean speed : %s - %s', clean_speed, deebotSpeed);
+        this.log.debug(
+          'INFO - Clean speed fro ' + deebotAccessory.name + ' : %s - %s',
+          clean_speed,
+          deebotSpeed
+        );
 
         if (deebotSpeed !== clean_speed) {
           let newSpeed = this.platform.getFanSpeed(clean_speed);
-          HKFanService.getCharacteristic(Characteristic.RotationSpeed).updateValue(newSpeed);
+          deebotAccessory.HKFanService.getCharacteristic(Characteristic.RotationSpeed).updateValue(
+            newSpeed
+          );
         }
       }
     });
 
     vacBot.on('Error', (error_message) => {
-      this.log.debug('INFO - Error from deebot : %s ', error_message);
+      this.log.debug('INFO - Error from deebot ' + deebotAccessory.name + ' : %s ', error_message);
       if (error_message) {
         if (error_message.indexOf('Timeout') > -1) {
           //an order might have been lost, so we update
@@ -183,16 +218,21 @@ DeebotEcovacsAPI.prototype = {
           vacBot.run('GetBatteryState');
           vacBot.run('GetChargeState');
           vacBot.run('GetCleanSpeed');
-        } else if (deebotAccessory.publishMotionDetector && HKMotionService) {
+        } else if (deebotAccessory.HKMotionService != undefined) {
           let isOnError = error_message.indexOf('NoError') == -1;
-          this.log.debug('INFO - updating sensor : %s ', isOnError);
-          HKMotionService.getCharacteristic(Characteristic.MotionDetected).updateValue(isOnError);
+          this.log.debug(
+            'INFO - updating sensor for ' + deebotAccessory.name + ' : %s ',
+            isOnError
+          );
+          deebotAccessory.HKMotionService.getCharacteristic(
+            Characteristic.MotionDetected
+          ).updateValue(isOnError);
         }
       }
     });
 
     vacBot.on('message', (message) => {
-      this.log.debug('INFO - Message from deebot : %s ', message);
+      this.log.debug('INFO - Message from deebot ' + deebotAccessory.name + ' : %s ', message);
     });
 
     if (!vacBot.is_ready) vacBot.connect_and_wait_until_ready();

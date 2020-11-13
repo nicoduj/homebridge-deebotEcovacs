@@ -176,7 +176,7 @@
         "title": "Publish SpotArea Cleaning Switchs",
         "type": "array",
         "items": {
-          "title": "SpotArea numbers, comma separated",
+          "title": "SpotArea numbers, comma separated. Must be something like ['1','1,2'] or ['deebotName|1','deebotName2|1,2'] if you have multiple deebots",
           "type": "string"
         }
       },
@@ -184,7 +184,7 @@
         "title": "Publish CustomArea Cleaning Switchs",
         "type": "array",
         "items": {
-          "title": "SpotArea coordinates like - (x1,y1,x2,y2) - ",
+          "title": "CustomArea coordinates, comma separated. Must be something like ['(x1,y1,x2,y2)','(x1,y1,x2,y2)'] or ['deebotName|(x1,y1,x2,y2)','deebotName2|(x1,y1,x2,y2)'] if you have multiple deebots",
           "type": "string"
         }
       }

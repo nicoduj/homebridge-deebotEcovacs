@@ -73,8 +73,8 @@ Fields:
 - `publishAutoSwitch` Optional - Publish a switch to start in auto Mode.
 - `publishEdgeSwitch` Optional - Publish a switch to start in edge Mode.
 - `publishSpotSwitch` Optional - Publish a switch to start in spot Mode.
-- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"]
-- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["(x1,y1,x2,y2)","(x1,y1,x2,y2)"]
+- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"] or ["deebotName|1","deebotName2|1,2"] if you have multiple deebots
+- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["(x1,y1,x2,y2)","(x1,y1,x2,y2)"] or ["deebotName|(x1,y1,x2,y2)","deebotName2|(x1,y1,x2,y2)"] if you have multiple deebots
 
 See : https://github.com/mrbungle64/ecovacs-deebot.js/wiki/Clean-modes
 
