@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.3.7
+
+- [FIX] potential fix for #37 (multiple deebots)
+
 ## 1.3.6
 
 - [FIX] potential fix for #37 (multiple deebots)
