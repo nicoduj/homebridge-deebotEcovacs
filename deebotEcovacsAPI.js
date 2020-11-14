@@ -11,8 +11,6 @@ module.exports = {
 };
 
 function DeebotEcovacsAPI(log, platform) {
-  EventEmitter.call(this);
-
   this.log = log;
   this.platform = platform;
   this.login = platform.login;
@@ -65,7 +63,7 @@ DeebotEcovacsAPI.prototype = {
     var Characteristic = this.platform.api.hap.Characteristic;
 
     var vacBot = deebotAccessory.vacBot;
-
+    EventEmitter.call(vacBot);
     vacBot.on('ready', (event) => {
       this.log.debug('INFO - Vacbot ' + deebotAccessory.name + ' ready: ' + JSON.stringify(event));
 
