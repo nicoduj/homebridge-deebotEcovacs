@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.0
+
+- [NEW] specify the deebotname to make it works with multiple deebots. You will need to have one instance of the plugin per deebot. #37 #40
+
 ## 1.3.7
 
 - [FIX] potential fix for #37 (multiple deebots)

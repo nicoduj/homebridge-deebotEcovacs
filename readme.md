@@ -58,6 +58,27 @@ Config as below:
 ]
 ```
 
+If you have more than oneDeebot, please use deebotName property and add one platform per Deebot, like :
+
+```json
+"platforms": [
+  {
+    "platform": "DeebotEcovacs",
+    "email": "toto@titi.com",
+    "password": "toto",
+    "countryCode" : "FR",
+    "deebotName" : "Deebot1"
+  },
+  {
+    "platform": "DeebotEcovacs",
+    "email": "toto@titi.com",
+    "password": "toto",
+    "countryCode" : "FR",
+    "deebotName" : "Deebot2"
+  }
+]
+```
+
 Fields:
 
 - `platform` must be "DeebotEcovacs" (required).
@@ -66,6 +87,7 @@ Fields:
 - `country code` : country code for your account , value in : CH, TW, MY, JP, SG, TH, HK, IN, KR,US,FR, ES, UK, NO, MX, DE, PT, CH, AU, IT, NL, SE, BE, DK, OTHER (required).
 - `refreshTimer` Optional - enable refresh of deebot state every X seconds, for automation purpose if you need to activate something else based on its state change (defaults : disable, accepted range : 30-600s).
 - `cleanCache` Set it to true in case you want to remove the cached accessory (only those from this plugin). You have to restart homebridge after applying the option. Remove it after restart, otherwise it will be recreated at each startup.
+- `deebotName` Name of the deebot to publish. In case of multiple ones, you will need to use this in order to specify which one you want. Defaults to first one on your account.
 - `publishBipSwitch` Optional - defaults to true - Publish the switch that makes the deebot beeps
 - `publishFan` Optional - defaults to true - Publish the fan that makes speed cleaning available
 - `publishSwitch` Optional - defaults to true - Publish the switch that makes on/off available
@@ -73,8 +95,8 @@ Fields:
 - `publishAutoSwitch` Optional - Publish a switch to start in auto Mode.
 - `publishEdgeSwitch` Optional - Publish a switch to start in edge Mode.
 - `publishSpotSwitch` Optional - Publish a switch to start in spot Mode.
-- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"] or ["deebotName|1","deebotName2|1,2"] if you have multiple deebots
-- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["(x1,y1,x2,y2)","(x1,y1,x2,y2)"] or ["deebotName|(x1,y1,x2,y2)","deebotName2|(x1,y1,x2,y2)"] if you have multiple deebots
+- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"]
+- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["(x1,y1,x2,y2)","(x1,y1,x2,y2)"]
 
 See : https://github.com/mrbungle64/ecovacs-deebot.js/wiki/Clean-modes
 

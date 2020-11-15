@@ -20,12 +20,11 @@ function DeebotEcovacsAPI(log, platform) {
   this.device_id = EcoVacsAPI.md5(nodeMachineId.machineIdSync());
   this.password_hash = EcoVacsAPI.md5(platform.password);
   this.continent = countries[this.countryCode].continent.toUpperCase();
+  this.deebotName = platform.deebotName;
 
   this.log('INFO - API :' + this.continent + '/' + this.countryCode);
 
   this.api = new EcoVacsAPI(this.device_id, this.countryCode, this.continent);
-
-  this.vacbots = [];
 }
 
 DeebotEcovacsAPI.prototype = {
@@ -39,16 +38,24 @@ DeebotEcovacsAPI.prototype = {
 
           for (let s = 0; s < devices.length; s++) {
             let vacuum = devices[s]; // Selects the first vacuum from your account
+            let foundDeebotName = vacuum.nick ? vacuum.nick : vacuum.name;
 
-            let vacbot = this.api.getVacBot(
-              this.api.uid,
-              EcoVacsAPI.REALM,
-              this.api.resource,
-              this.api.user_access_token,
-              vacuum,
-              this.continent
-            );
-            this.vacbots.push(vacbot);
+            if (
+              this.deebotName == undefined ||
+              this.deebotName == '' ||
+              this.deebotName === foundDeebotName
+            ) {
+              const vacbot = this.api.getVacBot(
+                this.api.uid,
+                EcoVacsAPI.REALM,
+                this.api.resource,
+                this.api.user_access_token,
+                vacuum,
+                this.continent
+              );
+              this.vacbot = vacbot;
+              break;
+            }
           }
 
           this.emit('deebotsDiscovered');
@@ -65,7 +72,7 @@ DeebotEcovacsAPI.prototype = {
   configureEvents: function (deebotAccessory) {
     var Characteristic = this.platform.api.hap.Characteristic;
 
-    let vacBot = deebotAccessory.vacBot;
+    const vacBot = deebotAccessory.vacBot;
 
     vacBot.on('ready', (event) => {
       this.log.debug('INFO - Vacbot ' + deebotAccessory.name + ' ready: ' + JSON.stringify(event));
