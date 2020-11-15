@@ -122,10 +122,13 @@
           }
         ]
       },
-      "deebotName": {
+      "deebotNames": {
         "title": "Name of the deebot to publish",
-        "type": "string",
-        "description": "In case of multiple ones, you will need to use this in order to specify which one you want. Defaults to first one on your account."
+        "type": "array",
+        "items": {
+          "title": "NickName of the deebot you want to add. ",
+          "type": "string"
+        }
       },
       "refreshTimer": {
         "title": "Refresh timer",

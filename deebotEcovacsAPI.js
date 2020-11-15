@@ -20,11 +20,13 @@ function DeebotEcovacsAPI(log, platform) {
   this.device_id = EcoVacsAPI.md5(nodeMachineId.machineIdSync());
   this.password_hash = EcoVacsAPI.md5(platform.password);
   this.continent = countries[this.countryCode].continent.toUpperCase();
-  this.deebotName = platform.deebotName;
+  this.deebotNames = platform.deebotNames;
 
   this.log('INFO - API :' + this.continent + '/' + this.countryCode);
 
   this.api = new EcoVacsAPI(this.device_id, this.countryCode, this.continent);
+
+  this.vacbots = [];
 }
 
 DeebotEcovacsAPI.prototype = {
@@ -41,9 +43,9 @@ DeebotEcovacsAPI.prototype = {
             let foundDeebotName = vacuum.nick ? vacuum.nick : vacuum.name;
 
             if (
-              this.deebotName == undefined ||
-              this.deebotName == '' ||
-              this.deebotName === foundDeebotName
+              this.deebotNames == undefined ||
+              this.deebotNames.length == 0 ||
+              this.deebotNames.includes(foundDeebotName)
             ) {
               const vacbot = this.api.getVacBot(
                 this.api.uid,
@@ -53,8 +55,7 @@ DeebotEcovacsAPI.prototype = {
                 vacuum,
                 this.continent
               );
-              this.vacbot = vacbot;
-              break;
+              this.vacbots.push(vacbot);
             }
           }
 
