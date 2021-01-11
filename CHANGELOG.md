@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.2
+
+- [NEW] bump dep
+
 ## 1.4.1
 
 - [NEW] Reverting the one deebot per platform limit, since it won't be supported by homebridge in the futur to have multiple platform of the same plugin. Keeping a property to expose only some deebots (by defautl will try all).
