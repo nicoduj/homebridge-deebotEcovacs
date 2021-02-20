@@ -233,6 +233,7 @@ DeebotEcovacsAPI.prototype = {
             'INFO - updating sensor for ' + deebotAccessory.name + ' : %s ',
             isOnError
           );
+
           deebotAccessory.HKMotionService.getCharacteristic(
             Characteristic.MotionDetected
           ).updateValue(isOnError);

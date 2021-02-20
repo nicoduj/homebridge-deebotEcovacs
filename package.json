@@ -1,6 +1,6 @@
 {
   "name": "homebridge-deebotecovacs",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "author": "Nicolas Dujardin",
   "description": "Publish your deebot ecovacs as an homekit accessory",
   "main": "index.js",
@@ -25,7 +25,7 @@
     "homekit"
   ],
   "dependencies": {
-    "ecovacs-deebot": "^0.5.5",
+    "ecovacs-deebot": "^0.5.6",
     "node-machine-id": "^1.1.12"
   },
   "bugs": {

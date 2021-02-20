@@ -17,6 +17,12 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.4
+
+- [NEW] bump dep
+- [FIX] wrnings on homebridge 1.3.X
+-
+
 ## 1.4.3
 
 - [NEW] bump dep

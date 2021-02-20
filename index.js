@@ -230,23 +230,24 @@ myDeebotEcovacsPlatform.prototype = {
 
         if (!myDeebotEcovacsAccessory) {
           myDeebotEcovacsAccessory = new Accessory(deebotName, uuid);
-          myDeebotEcovacsAccessory.name = deebotName;
-          myDeebotEcovacsAccessory.manufacturer = vacBot.vacuum.company;
-          myDeebotEcovacsAccessory.serialNumber = vacBot.vacuum.did;
 
-          myDeebotEcovacsAccessory
-            .getService(Service.AccessoryInformation)
-            .setCharacteristic(Characteristic.Manufacturer, myDeebotEcovacsAccessory.manufacturer)
-            .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory.model)
-            .setCharacteristic(Characteristic.SerialNumber, myDeebotEcovacsAccessory.serialNumber);
           this.api.registerPlatformAccessories('homebridge-deebotecovacs', 'DeebotEcovacs', [
             myDeebotEcovacsAccessory,
           ]);
           this.foundAccessories.push(myDeebotEcovacsAccessory);
         }
-
+        myDeebotEcovacsAccessory.name = deebotName;
+        myDeebotEcovacsAccessory.manufacturer = vacBot.vacuum.company;
+        myDeebotEcovacsAccessory.serialNumber = vacBot.vacuum.did;
+        myDeebotEcovacsAccessory.model = vacBot.deviceModel;
         myDeebotEcovacsAccessory.vacBot = vacBot;
         myDeebotEcovacsAccessory.name = deebotName;
+
+        myDeebotEcovacsAccessory
+          .getService(Service.AccessoryInformation)
+          .setCharacteristic(Characteristic.Manufacturer, myDeebotEcovacsAccessory.manufacturer)
+          .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory.model)
+          .setCharacteristic(Characteristic.SerialNumber, myDeebotEcovacsAccessory.serialNumber);
 
         let HKBatteryService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
           deebotName,
@@ -789,7 +790,7 @@ myDeebotEcovacsPlatform.prototype = {
       .on(
         'get',
         function (callback) {
-          callback(false);
+          callback(null, false);
         }.bind(this)
       )
       .on(
@@ -811,7 +812,7 @@ myDeebotEcovacsPlatform.prototype = {
       .on(
         'get',
         function (callback) {
-          callback(false);
+          callback(null, false);
         }.bind(this)
       )
       .on(
@@ -826,7 +827,7 @@ myDeebotEcovacsPlatform.prototype = {
     service.getCharacteristic(Characteristic.MotionDetected).on(
       'get',
       function (callback) {
-        callback(false);
+        callback(null, false);
       }.bind(this)
     );
   },
