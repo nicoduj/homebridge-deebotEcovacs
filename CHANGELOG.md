@@ -17,11 +17,14 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.5-beta.0
+
+- [FIX] to be tested : Plugin causes huge amount of dns request #52
+
 ## 1.4.4
 
 - [NEW] bump dep
-- [FIX] wrnings on homebridge 1.3.X
--
+- [FIX] warnings on homebridge 1.3.X
 
 ## 1.4.3
 

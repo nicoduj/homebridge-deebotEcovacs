@@ -97,6 +97,8 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('BatteryInfo', (battery) => {
+      vacBot.errorInprogress = false;
+
       let batteryLevel = this.platform.getBatteryLevel(battery);
       let currentValue = deebotAccessory.HKBatteryService.getCharacteristic(
         Characteristic.BatteryLevel
@@ -125,6 +127,8 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('ChargeState', (charge_status) => {
+      vacBot.errorInprogress = false;
+
       let charging = charge_status == 'charging';
       let idle = charge_status == 'idle';
       let returning = charge_status == 'returning';
@@ -168,6 +172,8 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('CleanReport', (clean_status) => {
+      vacBot.errorInprogress = false;
+
       this.log.debug('INFO - Clean status for ' + deebotAccessory.name + ' : %s', clean_status);
 
       if (clean_status) {
@@ -197,6 +203,7 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('CleanSpeed', (clean_speed) => {
+      vacBot.errorInprogress = false;
       if (deebotAccessory.HKFanService != undefined) {
         let currentSpeedValue = deebotAccessory.HKFanService.getCharacteristic(
           Characteristic.RotationSpeed
@@ -219,14 +226,26 @@ DeebotEcovacsAPI.prototype = {
     });
 
     vacBot.on('Error', (error_message) => {
-      this.log.debug('INFO - Error from deebot ' + deebotAccessory.name + ' : %s ', error_message);
+      this.log.debug(
+        'INFO - Error from deebot ' +
+          deebotAccessory.name +
+          '(ready : ' +
+          vacBot.is_ready +
+          ')' +
+          ' : %s ',
+        error_message
+      );
       if (error_message) {
         if (error_message.indexOf('Timeout') > -1) {
           //an order might have been lost, so we update
-          vacBot.run('GetCleanState');
-          vacBot.run('GetBatteryState');
-          vacBot.run('GetChargeState');
-          vacBot.run('GetCleanSpeed');
+
+          if (!vacBot.errorInprogress) {
+            vacBot.errorInprogress = true;
+            vacBot.run('GetCleanState');
+            vacBot.run('GetBatteryState');
+            vacBot.run('GetChargeState');
+            vacBot.run('GetCleanSpeed');
+          }
         } else if (deebotAccessory.HKMotionService != undefined) {
           let isOnError = error_message.indexOf('NoError') == -1;
           this.log.debug(
@@ -245,7 +264,13 @@ DeebotEcovacsAPI.prototype = {
       this.log.debug('INFO - Message from deebot ' + deebotAccessory.name + ' : %s ', message);
     });
 
-    if (!vacBot.is_ready) vacBot.connect_and_wait_until_ready();
+    vacBot.on('disconnect', (error) => {
+      if (error) {
+        this.log('WARNING - Message from deebot ' + deebotAccessory.name + ' : %s ', error);
+      }
+      vacBot.disconnect();
+      vacBot.connect_and_wait_until_ready();
+    });
   },
 };
 
