@@ -83,6 +83,10 @@ DeebotEcovacsAPI.prototype = {
       vacBot.run('GetChargeState');
       vacBot.run('GetCleanSpeed');
 
+      if (vacBot.hasSpotAreas()) {
+        vacBot.run('GetMaps');
+      }
+
       if (vacBot.orderToSend && vacBot.orderToSend !== undefined) {
         this.log('INFO - sendingCommand ' + vacBot.orderToSend + ' to ' + deebotAccessory.name);
 
@@ -269,8 +273,78 @@ DeebotEcovacsAPI.prototype = {
         this.log('WARNING - Message from deebot ' + deebotAccessory.name + ' : %s ', error);
       }
       vacBot.disconnect();
-      vacBot.connect_and_wait_until_ready();
+      vacBot.connect();
     });
+
+    if (this.platform.showInfoLogs) {
+      vacBot.on('LastUsedAreaValues', (values) => {
+        this.log('INFO - LastUsedAreaValues ' + values + ' for ' + deebotAccessory.name);
+      });
+      vacBot.on('Maps', (maps) => {
+        this.log('INFO - Maps ' + JSON.stringify(maps) + ' for ' + deebotAccessory.name);
+        for (const i in maps['maps']) {
+          const mapID = maps['maps'][i]['mapID'];
+          vacBot.run('GetSpotAreas', mapID);
+          vacBot.run('GetVirtualBoundaries', mapID);
+        }
+      });
+      vacBot.on('MapSpotAreas', (spotAreas) => {
+        this.log(
+          'INFO - MapSpotAreas ' + JSON.stringify(spotAreas) + ' for ' + deebotAccessory.name
+        );
+        for (const i in spotAreas['mapSpotAreas']) {
+          const spotAreaID = spotAreas['mapSpotAreas'][i]['mapSpotAreaID'];
+          vacBot.run('GetSpotAreaInfo', spotAreas['mapID'], spotAreaID);
+        }
+      });
+      vacBot.on('MapSpotAreaInfo', (area) => {
+        this.log('INFO - MapSpotAreaInfo ' + JSON.stringify(area) + ' for ' + deebotAccessory.name);
+      });
+      vacBot.on('MapVirtualBoundaries', (virtualBoundaries) => {
+        this.log(
+          'INFO - MapVirtualBoundaries ' +
+            JSON.stringify(virtualBoundaries) +
+            ' for ' +
+            deebotAccessory.name
+        );
+
+        const mapID = virtualBoundaries['mapID'];
+        const virtualBoundariesCombined = [
+          ...virtualBoundaries['mapVirtualWalls'],
+          ...virtualBoundaries['mapNoMopZones'],
+        ];
+        const virtualBoundaryArray = [];
+        for (const i in virtualBoundariesCombined) {
+          virtualBoundaryArray[virtualBoundariesCombined[i]['mapVirtualBoundaryID']] =
+            virtualBoundariesCombined[i];
+        }
+        for (const i in virtualBoundaryArray) {
+          const mapVirtualBoundaryID = virtualBoundaryArray[i]['mapVirtualBoundaryID'];
+          const mapVirtualBoundaryType = virtualBoundaryArray[i]['mapVirtualBoundaryType'];
+          vacBot.run('GetVirtualBoundaryInfo', mapID, mapVirtualBoundaryID, mapVirtualBoundaryType);
+        }
+      });
+      vacBot.on('MapVirtualBoundaryInfo', (virtualBoundary) => {
+        this.log(
+          'INFO - MapVirtualBoundaryInfo ' +
+            JSON.stringify(virtualBoundary) +
+            ' for ' +
+            deebotAccessory.name
+        );
+      });
+      vacBot.on('CurrentMapName', (value) => {
+        this.log('INFO - CurrentMapName ' + value + ' for ' + deebotAccessory.name);
+      });
+      vacBot.on('CurrentMapMID', (mapID) => {
+        this.log('INFO - CurrentMapMID ' + mapID + ' for ' + deebotAccessory.name);
+        vacBot.run('GetSpotAreas', mapID);
+      });
+      vacBot.on('CurrentMapIndex', (value) => {
+        this.log('INFO - CurrentMapIndex ' + value + ' for ' + deebotAccessory.name);
+      });
+    }
+
+    vacBot.connect();
   },
 };
 

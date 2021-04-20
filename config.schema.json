@@ -184,7 +184,7 @@
         "title": "Publish SpotArea Cleaning Switchs",
         "type": "array",
         "items": {
-          "title": "SpotArea numbers, comma separated. Must be something like ['1','1,2'] or ['deebotName|1','deebotName2|1,2'] if you have multiple deebots",
+          "title": "SpotArea numbers  (comma separated. 1 or 1,2 or deebotName|1 or deebotName2|1,2 if you have multiple deebots)",
           "type": "string"
         }
       },
@@ -192,9 +192,21 @@
         "title": "Publish CustomArea Cleaning Switchs",
         "type": "array",
         "items": {
-          "title": "CustomArea coordinates, comma separated. Must be something like ['(x1,y1,x2,y2)','(x1,y1,x2,y2)'] or ['deebotName|(x1,y1,x2,y2)','deebotName2|(x1,y1,x2,y2)'] if you have multiple deebots",
+          "title": "CustomArea coordinates (comma separated. Must be something like x1,y1,x2,y2  or deebotName|x1,y1,x2,y2 if you have multiple deebots)",
           "type": "string"
         }
+      },
+      "publishAreaSwitchesAsSeparateDevices": {
+        "title": "Publish Area Switches as separate devices",
+        "type": "boolean",
+        "default": false,
+        "description": "Publish Custom / Spot switches as indiviual accessories so that you can move them in other rooms"
+      },
+      "showInfoLogs": {
+        "title": "Show info logs",
+        "type": "boolean",
+        "default": false,
+        "description": "Log info for maps, custom areas and so on"
       }
     }
   },
