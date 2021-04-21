@@ -55,8 +55,11 @@ function myDeebotEcovacsPlatform(log, config, api) {
   this.publishSpotSwitch = checkParameter(config['publishSpotSwitch'], false);
   this.publishSpotAreaSwitches = config['publishSpotAreaSwitches'];
   this.publishCustomAreaSwitches = config['publishCustomAreaSwitches'];
-  this.publishAreaSwitchesAsSeparateDevices = config['publishAreaSwitchesAsSeparateDevices'];
-  this.showInfoLogs = config['showInfoLogs'];
+  this.publishAreaSwitchesAsSeparateDevices = checkParameter(
+    config['publishAreaSwitchesAsSeparateDevices'],
+    false
+  );
+  this.showInfoLogs = checkParameter(config['showInfoLogs'], false);
 
   this.defaultOrder = ['Clean', 'auto'];
 
@@ -446,7 +449,7 @@ myDeebotEcovacsPlatform.prototype = {
                 );
                 HKSwitchSpotAreaService.subtype = 'SwitchSpotAreaService' + i + deebotName;
                 if (this.publishAreaSwitchesAsSeparateDevices) {
-                  let uuid2 = UUIDGen.generate(deebotName);
+                  let uuid2 = UUIDGen.generate(deebotName + 'SpotArea ' + i);
                   let myDeebotEcovacsAccessory2 = this.foundAccessories.find((x) => x.UUID == uuid);
 
                   if (!myDeebotEcovacsAccessory2) {
@@ -536,7 +539,7 @@ myDeebotEcovacsPlatform.prototype = {
                 HKSwitchCustomAreaService.subtype = 'SwitchCustomAreaService' + i + deebotName;
 
                 if (this.publishAreaSwitchesAsSeparateDevices) {
-                  let uuid2 = UUIDGen.generate(deebotName);
+                  let uuid2 = UUIDGen.generate(deebotName + 'CustomArea ' + i);
                   let myDeebotEcovacsAccessory2 = this.foundAccessories.find((x) => x.UUID == uuid);
 
                   if (!myDeebotEcovacsAccessory2) {

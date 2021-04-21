@@ -17,13 +17,17 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.5-beta.2
+
+- [FIX] Custom areas and spots as separate device #63
+
 ## 1.4.5-beta.1
 
 - [NEW] switching to beta version of underlygin lib from @mrbungle64
 - [FIX] still to be tested : Plugin causes huge amount of dns request #52
 - [FIX] trying to fix regression on XMPP devices #55
 - [NEW] Custom areas and spots as separate device #63
-- [NEW] Options to show logs lijke areas and so on for easier configuration
+- [NEW] Options to show logs like areas and so on for easier configuration
 
 ## 1.4.5-beta.0
 
