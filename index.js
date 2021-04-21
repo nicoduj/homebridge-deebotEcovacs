@@ -485,6 +485,7 @@ myDeebotEcovacsPlatform.prototype = {
                     );
 
                   myDeebotEcovacsAccessory2.addService(HKSwitchSpotAreaService);
+                  this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
                 } else {
                   myDeebotEcovacsAccessory.addService(HKSwitchSpotAreaService);
                 }
@@ -582,6 +583,7 @@ myDeebotEcovacsPlatform.prototype = {
                     );
 
                   myDeebotEcovacsAccessory2.addService(HKSwitchCustomAreaService);
+                  this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
                 } else {
                   myDeebotEcovacsAccessory.addService(HKSwitchCustomAreaService);
                 }
