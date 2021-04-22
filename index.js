@@ -434,7 +434,48 @@ myDeebotEcovacsPlatform.prototype = {
             }
 
             if (isForThisDeebot) {
-              let HKSwitchSpotAreaService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+              //get Accessory
+              let accessory = myDeebotEcovacsAccessory;
+
+              if (this.publishAreaSwitchesAsSeparateDevices) {
+                let uuid2 = UUIDGen.generate(deebotName + 'SpotArea ' + i);
+                let myDeebotEcovacsAccessory2 = this.foundAccessories.find((x) => x.UUID == uuid2);
+
+                if (!myDeebotEcovacsAccessory2) {
+                  this.log('INFO - Creating SpotArea' + i + ' Accessory for ' + deebotName);
+
+                  myDeebotEcovacsAccessory2 = new Accessory(deebotName + 'SpotArea ' + i, uuid2);
+
+                  this.api.registerPlatformAccessories(
+                    'homebridge-deebotecovacs',
+                    'DeebotEcovacs',
+                    [myDeebotEcovacsAccessory2]
+                  );
+                  this.foundAccessories.push(myDeebotEcovacsAccessory2);
+                }
+                myDeebotEcovacsAccessory2.name = deebotName + 'SpotArea ' + i;
+                myDeebotEcovacsAccessory2.manufacturer = vacBot.vacuum.company;
+                myDeebotEcovacsAccessory2.serialNumber = vacBot.vacuum.did;
+                myDeebotEcovacsAccessory2.model = vacBot.deviceModel;
+                myDeebotEcovacsAccessory2.vacBot = vacBot;
+
+                myDeebotEcovacsAccessory2
+                  .getService(Service.AccessoryInformation)
+                  .setCharacteristic(
+                    Characteristic.Manufacturer,
+                    myDeebotEcovacsAccessory2.manufacturer
+                  )
+                  .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory2.model)
+                  .setCharacteristic(
+                    Characteristic.SerialNumber,
+                    myDeebotEcovacsAccessory2.serialNumber
+                  );
+
+                this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
+                accessory = myDeebotEcovacsAccessory2;
+              }
+
+              let HKSwitchSpotAreaService = accessory.getServiceByUUIDAndSubType(
                 'SpotArea ' + i + ' ' + deebotName,
                 'SwitchSpotAreaService' + i + deebotName
               );
@@ -448,47 +489,8 @@ myDeebotEcovacsPlatform.prototype = {
                   'SwitchSpotAreaService' + i + deebotName
                 );
                 HKSwitchSpotAreaService.subtype = 'SwitchSpotAreaService' + i + deebotName;
-                if (this.publishAreaSwitchesAsSeparateDevices) {
-                  let uuid2 = UUIDGen.generate(deebotName + 'SpotArea ' + i);
-                  let myDeebotEcovacsAccessory2 = this.foundAccessories.find(
-                    (x) => x.UUID == uuid2
-                  );
 
-                  if (!myDeebotEcovacsAccessory2) {
-                    this.log('INFO - Creating SpotArea' + i + ' Accessory for ' + deebotName);
-
-                    myDeebotEcovacsAccessory2 = new Accessory(deebotName + 'SpotArea ' + i, uuid2);
-
-                    this.api.registerPlatformAccessories(
-                      'homebridge-deebotecovacs',
-                      'DeebotEcovacs',
-                      [myDeebotEcovacsAccessory2]
-                    );
-                    this.foundAccessories.push(myDeebotEcovacsAccessory2);
-                  }
-                  myDeebotEcovacsAccessory2.name = deebotName + 'SpotArea ' + i;
-                  myDeebotEcovacsAccessory2.manufacturer = vacBot.vacuum.company;
-                  myDeebotEcovacsAccessory2.serialNumber = vacBot.vacuum.did;
-                  myDeebotEcovacsAccessory2.model = vacBot.deviceModel;
-                  myDeebotEcovacsAccessory2.vacBot = vacBot;
-
-                  myDeebotEcovacsAccessory2
-                    .getService(Service.AccessoryInformation)
-                    .setCharacteristic(
-                      Characteristic.Manufacturer,
-                      myDeebotEcovacsAccessory2.manufacturer
-                    )
-                    .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory2.model)
-                    .setCharacteristic(
-                      Characteristic.SerialNumber,
-                      myDeebotEcovacsAccessory2.serialNumber
-                    );
-
-                  myDeebotEcovacsAccessory2.addService(HKSwitchSpotAreaService);
-                  this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
-                } else {
-                  myDeebotEcovacsAccessory.addService(HKSwitchSpotAreaService);
-                }
+                accessory.addService(HKSwitchSpotAreaService);
               }
 
               this.bindSwitchOrderCharacteristic(
@@ -528,7 +530,47 @@ myDeebotEcovacsPlatform.prototype = {
             }
 
             if (isForThisDeebot) {
-              let HKSwitchCustomAreaService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+              //get Accessory
+              let accessory = myDeebotEcovacsAccessory;
+
+              if (this.publishAreaSwitchesAsSeparateDevices) {
+                let uuid2 = UUIDGen.generate(deebotName + 'CustomArea ' + i);
+                let myDeebotEcovacsAccessory2 = this.foundAccessories.find((x) => x.UUID == uuid2);
+
+                if (!myDeebotEcovacsAccessory2) {
+                  this.log('INFO - Creating CustomArea ' + i + ' Accessory for ' + deebotName);
+
+                  myDeebotEcovacsAccessory2 = new Accessory(deebotName + 'CustomArea ' + i, uuid2);
+
+                  this.api.registerPlatformAccessories(
+                    'homebridge-deebotecovacs',
+                    'DeebotEcovacs',
+                    [myDeebotEcovacsAccessory2]
+                  );
+                  this.foundAccessories.push(myDeebotEcovacsAccessory2);
+                }
+                myDeebotEcovacsAccessory2.name = deebotName + 'CustomArea ' + i;
+                myDeebotEcovacsAccessory2.manufacturer = vacBot.vacuum.company;
+                myDeebotEcovacsAccessory2.serialNumber = vacBot.vacuum.did;
+                myDeebotEcovacsAccessory2.model = vacBot.deviceModel;
+                myDeebotEcovacsAccessory2.vacBot = vacBot;
+
+                myDeebotEcovacsAccessory2
+                  .getService(Service.AccessoryInformation)
+                  .setCharacteristic(
+                    Characteristic.Manufacturer,
+                    myDeebotEcovacsAccessory2.manufacturer
+                  )
+                  .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory2.model)
+                  .setCharacteristic(
+                    Characteristic.SerialNumber,
+                    myDeebotEcovacsAccessory2.serialNumber
+                  );
+                this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
+                accessory = myDeebotEcovacsAccessory2;
+              }
+
+              let HKSwitchCustomAreaService = accessory.getServiceByUUIDAndSubType(
                 'CustomArea ' + i + ' ' + deebotName,
                 'SwitchCustomAreaService' + i + deebotName
               );
@@ -542,51 +584,7 @@ myDeebotEcovacsPlatform.prototype = {
                   'SwitchCustomAreaService' + i + deebotName
                 );
                 HKSwitchCustomAreaService.subtype = 'SwitchCustomAreaService' + i + deebotName;
-
-                if (this.publishAreaSwitchesAsSeparateDevices) {
-                  let uuid2 = UUIDGen.generate(deebotName + 'CustomArea ' + i);
-                  let myDeebotEcovacsAccessory2 = this.foundAccessories.find(
-                    (x) => x.UUID == uuid2
-                  );
-
-                  if (!myDeebotEcovacsAccessory2) {
-                    this.log('INFO - Creating CustomArea ' + i + ' Accessory for ' + deebotName);
-
-                    myDeebotEcovacsAccessory2 = new Accessory(
-                      deebotName + 'CustomArea ' + i,
-                      uuid2
-                    );
-
-                    this.api.registerPlatformAccessories(
-                      'homebridge-deebotecovacs',
-                      'DeebotEcovacs',
-                      [myDeebotEcovacsAccessory2]
-                    );
-                    this.foundAccessories.push(myDeebotEcovacsAccessory2);
-                  }
-                  myDeebotEcovacsAccessory2.name = deebotName + 'CustomArea ' + i;
-                  myDeebotEcovacsAccessory2.manufacturer = vacBot.vacuum.company;
-                  myDeebotEcovacsAccessory2.serialNumber = vacBot.vacuum.did;
-                  myDeebotEcovacsAccessory2.model = vacBot.deviceModel;
-                  myDeebotEcovacsAccessory2.vacBot = vacBot;
-
-                  myDeebotEcovacsAccessory2
-                    .getService(Service.AccessoryInformation)
-                    .setCharacteristic(
-                      Characteristic.Manufacturer,
-                      myDeebotEcovacsAccessory2.manufacturer
-                    )
-                    .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory2.model)
-                    .setCharacteristic(
-                      Characteristic.SerialNumber,
-                      myDeebotEcovacsAccessory2.serialNumber
-                    );
-
-                  myDeebotEcovacsAccessory2.addService(HKSwitchCustomAreaService);
-                  this._confirmedAccessories.push(myDeebotEcovacsAccessory2);
-                } else {
-                  myDeebotEcovacsAccessory.addService(HKSwitchCustomAreaService);
-                }
+                accessory.addService(HKSwitchCustomAreaService);
               }
 
               this.bindSwitchOrderCharacteristic(

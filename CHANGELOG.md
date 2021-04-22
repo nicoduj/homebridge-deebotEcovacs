@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.5-beta.5
+
+- [FIX] Custom areas and spots as separate device #63
+
 ## 1.4.5-beta.4
 
 - [FIX] Custom areas and spots as separate device #63
