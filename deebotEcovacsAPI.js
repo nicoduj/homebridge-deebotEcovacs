@@ -83,7 +83,7 @@ DeebotEcovacsAPI.prototype = {
       vacBot.run('GetChargeState');
       vacBot.run('GetCleanSpeed');
 
-      if (vacBot.hasSpotAreas()) {
+      if (vacBot.hasSpotAreaCleaningMode()) {
         vacBot.run('GetMaps');
       }
 
