@@ -17,6 +17,10 @@ You can also use the [PACKAGES](https://github.com/oznu/docker-homebridge#option
 
 All notable changes to this project will be documented in this file.
 
+## 1.4.6
+
+- [NEW] bump dep
+
 ## 1.4.5
 
 - [NEW] switching to beta version of underlygin lib from @mrbungle64
