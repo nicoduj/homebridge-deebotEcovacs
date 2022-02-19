@@ -423,14 +423,21 @@ myDeebotEcovacsPlatform.prototype = {
         if (this.publishSpotAreaSwitches !== undefined && vacBot.hasSpotAreaCleaningMode()) {
           for (let i = 0; i < this.publishSpotAreaSwitches.length; i++) {
             let isForThisDeebot = true;
-            var command = '';
+            var command = this.publishSpotAreaSwitches[i];
+            var switchName = '';
 
-            if (this.publishSpotAreaSwitches[i].indexOf('|') > -1) {
-              let expectedDeebotName = this.publishSpotAreaSwitches[i].split('|')[0];
-              command = this.publishSpotAreaSwitches[i].split('|')[1];
-              isForThisDeebot = expectedDeebotName === deebotName;
+            //name handling
+            if (command.indexOf('/') > -1) {
+              switchName = command.split('/')[1];
+              command = command.split('/')[0];
             } else {
-              command = this.publishSpotAreaSwitches[i];
+              switchName = 'SpotArea ' + i + ' ' + deebotName;
+            }
+
+            if (command.indexOf('|') > -1) {
+              let expectedDeebotName = command.split('|')[0];
+              command = command.split('|')[1];
+              isForThisDeebot = expectedDeebotName === deebotName;
             }
 
             if (isForThisDeebot) {
@@ -476,7 +483,7 @@ myDeebotEcovacsPlatform.prototype = {
               }
 
               let HKSwitchSpotAreaService = accessory.getServiceByUUIDAndSubType(
-                'SpotArea ' + i + ' ' + deebotName,
+                switchName,
                 'SwitchSpotAreaService' + i + deebotName
               );
 
@@ -485,7 +492,7 @@ myDeebotEcovacsPlatform.prototype = {
                   'INFO - Creating SpotArea ' + i + ' stateless Switch Service for ' + deebotName
                 );
                 HKSwitchSpotAreaService = new Service.Switch(
-                  'SpotArea ' + i + ' ' + deebotName,
+                  switchName,
                   'SwitchSpotAreaService' + i + deebotName
                 );
                 HKSwitchSpotAreaService.subtype = 'SwitchSpotAreaService' + i + deebotName;
@@ -509,12 +516,21 @@ myDeebotEcovacsPlatform.prototype = {
             var command = '';
             var numberOfCleanings = 1;
 
-            if (this.publishCustomAreaSwitches[i].indexOf('|') > -1) {
-              let expectedDeebotName = this.publishCustomAreaSwitches[i].split('|')[0];
-              command = this.publishCustomAreaSwitches[i].split('|')[1];
-              isForThisDeebot = expectedDeebotName === deebotName;
+            var command = this.publishCustomAreaSwitches[i];
+            var switchName = '';
+
+            //name handling
+            if (command.indexOf('/') > -1) {
+              switchName = command.split('/')[1];
+              command = command.split('/')[0];
             } else {
-              command = this.publishCustomAreaSwitches[i];
+              switchName = 'CustomArea ' + i + ' ' + deebotName;
+            }
+
+            if (command.indexOf('|') > -1) {
+              let expectedDeebotName = command.split('|')[0];
+              command = command.split('|')[1];
+              isForThisDeebot = expectedDeebotName === deebotName;
             }
 
             if (command.split(',').length > 4) {
@@ -571,7 +587,7 @@ myDeebotEcovacsPlatform.prototype = {
               }
 
               let HKSwitchCustomAreaService = accessory.getServiceByUUIDAndSubType(
-                'CustomArea ' + i + ' ' + deebotName,
+                switchName,
                 'SwitchCustomAreaService' + i + deebotName
               );
 
@@ -580,7 +596,7 @@ myDeebotEcovacsPlatform.prototype = {
                   'INFO - Creating CustomArea' + i + ' stateless Switch Service for ' + deebotName
                 );
                 HKSwitchCustomAreaService = new Service.Switch(
-                  'CustomArea ' + i + ' ' + deebotName,
+                  switchName,
                   'SwitchCustomAreaService' + i + deebotName
                 );
                 HKSwitchCustomAreaService.subtype = 'SwitchCustomAreaService' + i + deebotName;

@@ -74,8 +74,8 @@ Fields:
 - `publishAutoSwitch` Optional - Publish a switch to start in auto Mode.
 - `publishEdgeSwitch` Optional - Publish a switch to start in edge Mode.
 - `publishSpotSwitch` Optional - Publish a switch to start in spot Mode.
-- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"] or ["deebotName|1","deebotName2|1,2"] if you have multiple deebots
-- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["x1,y1,x2,y2,numberOfcleanings","x1,y1,x2,y2,numberOfcleanings"] or ["deebotName|x1,y1,x2,y2,numberOfcleanings","deebotName2|x1,y1,x2,y2,numberOfcleanings"] if you have multiple deebots ? number of cleanings is optionnal
+- `publishSpotAreaSwitches` Optional - Publish switches to start for each spot Area. Must be something like ["1","1,2"] or ["deebotName|1","deebotName2|1,2"] if you have multiple deebots . Name can be specified like ["1/Kitchen","1,2/LivingRoom"]
+- `publishCustomAreaSwitches` Optional - Publish switches to start for each Custom Area. Must be something like ["x1,y1,x2,y2,numberOfcleanings","x1,y1,x2,y2,numberOfcleanings"] or ["deebotName|x1,y1,x2,y2,numberOfcleanings","deebotName2|x1,y1,x2,y2,numberOfcleanings"] if you have multiple deebots. Number of cleanings is optionnal . Name can be specified like ["x1,y1,x2,y2,numberOfcleanings/Kitchen"]
 - `publishAreaSwitchesAsSeparateDevices` Optional - Defaults to false. Publish Custom / Spot switches as indiviual accessories so that you can move them in other rooms.
 - `showInfoLogs` Optional - Defaults to false. Log info for maps, custom areas and so on .
 
