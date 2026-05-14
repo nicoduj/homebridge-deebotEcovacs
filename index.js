@@ -1,13 +1,13 @@
-var Service, Characteristic, Accessory, UUIDGen;
+let Service, Characteristic, Accessory, UUIDGen, HomebridgeAPI;
 
-var DeebotEcovacsAPI = require('./deebotEcovacsAPI.js').DeebotEcovacsAPI;
+import {DeebotEcovacsAPI} from './deebotEcovacsAPI.js';
 
-checkTimer = function (timer) {
+function checkTimer(timer) {
   if (timer && timer > 0 && (timer < 30 || timer > 600)) return 300;
   else return timer;
-};
+}
 
-checkParameter = function (parameter, def) {
+function checkParameter(parameter, def) {
   if (parameter == undefined) {
     return def;
   } else {
@@ -28,7 +28,7 @@ checkParameter = function (parameter, def) {
       return parameter;
     }
   }
-};
+}
 
 function myDeebotEcovacsPlatform(log, config, api) {
   if (!config) {
@@ -95,7 +95,7 @@ function myDeebotEcovacsPlatform(log, config, api) {
     );
 }
 
-module.exports = function (homebridge) {
+export default function (homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
   Accessory = homebridge.platformAccessory;
@@ -107,7 +107,7 @@ module.exports = function (homebridge) {
     myDeebotEcovacsPlatform,
     true
   );
-};
+}
 
 myDeebotEcovacsPlatform.prototype = {
   configureAccessory: function (accessory) {
@@ -253,14 +253,14 @@ myDeebotEcovacsPlatform.prototype = {
           .setCharacteristic(Characteristic.Model, myDeebotEcovacsAccessory.model)
           .setCharacteristic(Characteristic.SerialNumber, myDeebotEcovacsAccessory.serialNumber);
 
-        let HKBatteryService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+        let HKBatteryService = myDeebotEcovacsAccessory.getServiceById(
           deebotName,
           'BatteryService' + deebotName
         );
 
         if (!HKBatteryService) {
           this.log('INFO - Creating Battery Service for ' + deebotName);
-          HKBatteryService = new Service.BatteryService(deebotName, 'BatteryService' + deebotName);
+          HKBatteryService = new Service.Battery(deebotName, 'BatteryService' + deebotName);
           HKBatteryService.subtype = 'BatteryService' + deebotName;
           myDeebotEcovacsAccessory.addService(HKBatteryService);
         }
@@ -272,14 +272,14 @@ myDeebotEcovacsPlatform.prototype = {
         myDeebotEcovacsAccessory.HKBatteryService = HKBatteryService;
 
         if (this.publishFan) {
-          let HKFanService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
-            'Start/Pause ' + deebotName,
+          let HKFanService = myDeebotEcovacsAccessory.getServiceById(
+            'Start-Pause ' + deebotName,
             'FanService' + deebotName
           );
 
           if (!HKFanService) {
             this.log('INFO - Creating Fan Service for ' + deebotName);
-            HKFanService = new Service.Fan('Start/Pause ' + deebotName, 'FanService' + deebotName);
+            HKFanService = new Service.Fan('Start-Pause ' + deebotName, 'FanService' + deebotName);
             HKFanService.subtype = 'FanService' + deebotName;
             myDeebotEcovacsAccessory.addService(HKFanService);
           }
@@ -294,15 +294,15 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishSwitch) {
-          let HKSwitchOnService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
-            'Start/Stop ' + deebotName,
+          let HKSwitchOnService = myDeebotEcovacsAccessory.getServiceById(
+            'Start-Stop ' + deebotName,
             'SwitchOnService' + deebotName
           );
 
           if (!HKSwitchOnService) {
             this.log('INFO - Creating Main Switch Service for ' + deebotName);
             HKSwitchOnService = new Service.Switch(
-              'Start/Stop ' + deebotName,
+              'Start-Stop ' + deebotName,
               'SwitchOnService' + deebotName
             );
             HKSwitchOnService.subtype = 'SwitchOnService' + deebotName;
@@ -316,7 +316,7 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishBipSwitch) {
-          let HKSwitchBipService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+          let HKSwitchBipService = myDeebotEcovacsAccessory.getServiceById(
             'Bip ' + deebotName,
             'SwitchBipService' + deebotName
           );
@@ -335,7 +335,7 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishMotionDetector) {
-          let HKMotionService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+          let HKMotionService = myDeebotEcovacsAccessory.getServiceById(
             deebotName + ' needs attention',
             'MotionService' + deebotName
           );
@@ -355,7 +355,7 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishAutoSwitch) {
-          let HKSwitchAutoService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+          let HKSwitchAutoService = myDeebotEcovacsAccessory.getServiceById(
             'Auto ' + deebotName,
             'SwitchAutoService' + deebotName
           );
@@ -377,7 +377,7 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishEdgeSwitch && vacBot.hasEdgeCleaningMode()) {
-          let HKSwitchEdgeService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+          let HKSwitchEdgeService = myDeebotEcovacsAccessory.getServiceById(
             'Edge ' + deebotName,
             'SwitchEdgeService' + deebotName
           );
@@ -399,7 +399,7 @@ myDeebotEcovacsPlatform.prototype = {
         }
 
         if (this.publishSpotSwitch && vacBot.hasSpotCleaningMode()) {
-          let HKSwitchSpotService = myDeebotEcovacsAccessory.getServiceByUUIDAndSubType(
+          let HKSwitchSpotService = myDeebotEcovacsAccessory.getServiceById(
             'Spot ' + deebotName,
             'SwitchSpotService' + deebotName
           );
@@ -423,8 +423,8 @@ myDeebotEcovacsPlatform.prototype = {
         if (this.publishSpotAreaSwitches !== undefined && vacBot.hasSpotAreaCleaningMode()) {
           for (let i = 0; i < this.publishSpotAreaSwitches.length; i++) {
             let isForThisDeebot = true;
-            var command = this.publishSpotAreaSwitches[i];
-            var switchName = '';
+            let command = this.publishSpotAreaSwitches[i];
+            let switchName = '';
 
             //name handling
             if (command.indexOf('/') > -1) {
@@ -482,7 +482,7 @@ myDeebotEcovacsPlatform.prototype = {
                 accessory = myDeebotEcovacsAccessory2;
               }
 
-              let HKSwitchSpotAreaService = accessory.getServiceByUUIDAndSubType(
+              let HKSwitchSpotAreaService = accessory.getServiceById(
                 switchName,
                 'SwitchSpotAreaService' + i + deebotName
               );
@@ -513,11 +513,11 @@ myDeebotEcovacsPlatform.prototype = {
         if (this.publishCustomAreaSwitches !== undefined && vacBot.hasCustomAreaCleaningMode()) {
           for (let i = 0; i < this.publishCustomAreaSwitches.length; i++) {
             let isForThisDeebot = true;
-            var command = '';
-            var numberOfCleanings = 1;
+            let command = '';
+            let numberOfCleanings = 1;
 
-            var command = this.publishCustomAreaSwitches[i];
-            var switchName = '';
+            command = this.publishCustomAreaSwitches[i];
+            let switchName = '';
 
             //name handling
             if (command.indexOf('/') > -1) {
@@ -586,7 +586,7 @@ myDeebotEcovacsPlatform.prototype = {
                 accessory = myDeebotEcovacsAccessory2;
               }
 
-              let HKSwitchCustomAreaService = accessory.getServiceByUUIDAndSubType(
+              let HKSwitchCustomAreaService = accessory.getServiceById(
                 switchName,
                 'SwitchCustomAreaService' + i + deebotName
               );
@@ -657,7 +657,7 @@ myDeebotEcovacsPlatform.prototype = {
   getBatteryLevelCharacteristic: function (homebridgeAccessory, service, callback) {
     this.log.debug('INFO - getBatteryLevelCharacteristic for ' + homebridgeAccessory.name);
 
-    var percent = service.getCharacteristic(Characteristic.BatteryLevel).value;
+    let percent = service.getCharacteristic(Characteristic.BatteryLevel).value;
     callback(undefined, percent);
 
     if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
@@ -669,7 +669,7 @@ myDeebotEcovacsPlatform.prototype = {
     this.log.debug('INFO - getChargingStateCharacteristic for ' + homebridgeAccessory.name);
 
     //don't call GetChargeState since on charac update will handle all
-    var charging = service.getCharacteristic(Characteristic.ChargingState).value;
+    let charging = service.getCharacteristic(Characteristic.ChargingState).value;
     callback(undefined, charging);
   },
 
@@ -677,14 +677,14 @@ myDeebotEcovacsPlatform.prototype = {
     this.log.debug('INFO - getLowBatteryCharacteristic for ' + homebridgeAccessory.name);
 
     //don't call GetBatteryState since batterylevel charac update will handle all
-    var lowww = service.getCharacteristic(Characteristic.StatusLowBattery).value;
+    let lowww = service.getCharacteristic(Characteristic.StatusLowBattery).value;
     callback(undefined, lowww);
   },
 
   getDeebotEcovacsOnCharacteristic: function (homebridgeAccessory, service, callback) {
     this.log.debug('INFO - getDeebotEcovacsOnCharacteristic for ' + homebridgeAccessory.name);
 
-    var cleaning = service.getCharacteristic(Characteristic.On).value;
+    let cleaning = service.getCharacteristic(Characteristic.On).value;
     callback(undefined, cleaning);
 
     if (homebridgeAccessory.vacBot && homebridgeAccessory.vacBot.is_ready) {
@@ -759,7 +759,7 @@ myDeebotEcovacsPlatform.prototype = {
 
     //don't call GetCleanState since on charac update will handle all
 
-    var speed = service.getCharacteristic(Characteristic.RotationSpeed).value;
+    let speed = service.getCharacteristic(Characteristic.RotationSpeed).value;
     callback(undefined, speed);
   },
   setDeebotEcovacsSpeedCharacteristic: function (homebridgeAccessory, service, value, callback) {

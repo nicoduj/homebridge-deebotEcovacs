@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0
+
+- [FIX] HB 2 compatibility
+
 ## 1.4.8
 
 **_!!! WARNING : If you rename existing switch with the new ability for custom areas / spot Areas, you will have to clear your accessory from cache before. !!!_**

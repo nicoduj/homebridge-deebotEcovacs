@@ -1,14 +1,9 @@
-const ecovacsDeebot = require('ecovacs-deebot'),
-  nodeMachineId = require('node-machine-id'),
-  countries = ecovacsDeebot.countries,
-  EcoVacsAPI = ecovacsDeebot.EcoVacsAPI;
+import {countries, EcoVacsAPI} from 'ecovacs-deebot';
+import nodeMachineId from 'node-machine-id';
+import {EventEmitter} from 'events';
+import {inherits} from 'util';
 
-var EventEmitter = require('events');
-var inherits = require('util').inherits;
-
-module.exports = {
-  DeebotEcovacsAPI: DeebotEcovacsAPI,
-};
+export {DeebotEcovacsAPI};
 
 function DeebotEcovacsAPI(log, platform) {
   EventEmitter.call(this);
@@ -71,7 +66,7 @@ DeebotEcovacsAPI.prototype = {
   },
 
   configureEvents: function (deebotAccessory) {
-    var Characteristic = this.platform.api.hap.Characteristic;
+    let Characteristic = this.platform.api.hap.Characteristic;
 
     const vacBot = deebotAccessory.vacBot;
 
