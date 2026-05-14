@@ -5,7 +5,6 @@
 [![npm](https://img.shields.io/npm/dt/homebridge-deebotecovacs.svg)](https://www.npmjs.com/package/homebridge-deebotecovacs)
 
 [![CodeFactor](https://www.codefactor.io/repository/github/nicoduj/homebridge-deebotecovacs/badge)](https://www.codefactor.io/repository/github/nicoduj/homebridge-deebotecovacs)
-[![Build Status](https://travis-ci.com/nicoduj/homebridge-deebotecovacs.svg?branch=master)](https://travis-ci.com/nicoduj/homebridge-deebotecovacs)
 [![Known Vulnerabilities](https://snyk.io/test/github/nicoduj/homebridge-deebotecovacs/badge.svg?targetFile=package.json)](https://snyk.io/test/github/nicoduj/homebridge-deebotecovacs?targetFile=package.json)
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
