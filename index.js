@@ -271,28 +271,6 @@ myDeebotEcovacsPlatform.prototype = {
 
         myDeebotEcovacsAccessory.HKBatteryService = HKBatteryService;
 
-        if (this.publishFan) {
-          let HKFanService = myDeebotEcovacsAccessory.getServiceById(
-            'Start-Pause ' + deebotName,
-            'FanService' + deebotName
-          );
-
-          if (!HKFanService) {
-            this.log('INFO - Creating Fan Service for ' + deebotName);
-            HKFanService = new Service.Fan('Start-Pause ' + deebotName, 'FanService' + deebotName);
-            HKFanService.subtype = 'FanService' + deebotName;
-            myDeebotEcovacsAccessory.addService(HKFanService);
-          }
-
-          HKFanService.type = 'fan';
-
-          this.bindOnCharacteristic(myDeebotEcovacsAccessory, HKFanService);
-          this.bindRotationSpeedCharacteristic(myDeebotEcovacsAccessory, HKFanService);
-          HKFanService.setPrimaryService(true);
-          this._confirmedServices.push(HKFanService);
-          myDeebotEcovacsAccessory.HKFanService = HKFanService;
-        }
-
         if (this.publishSwitch) {
           let HKSwitchOnService = myDeebotEcovacsAccessory.getServiceById(
             'Start-Stop ' + deebotName,
@@ -306,6 +284,11 @@ myDeebotEcovacsPlatform.prototype = {
               'SwitchOnService' + deebotName
             );
             HKSwitchOnService.subtype = 'SwitchOnService' + deebotName;
+            HKSwitchOnService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKSwitchOnService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              'Start-Stop ' + deebotName
+            );
             myDeebotEcovacsAccessory.addService(HKSwitchOnService);
           }
           this.bindSwitchOnCharacteristic(myDeebotEcovacsAccessory, HKSwitchOnService);
@@ -328,6 +311,11 @@ myDeebotEcovacsPlatform.prototype = {
               'SwitchBipService' + deebotName
             );
             HKSwitchBipService.subtype = 'SwitchBipService' + deebotName;
+            HKSwitchBipService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKSwitchBipService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              'Bip ' + deebotName
+            );
             myDeebotEcovacsAccessory.addService(HKSwitchBipService);
           }
           this.bindSwitchBipCharacteristic(myDeebotEcovacsAccessory, HKSwitchBipService);
@@ -347,6 +335,11 @@ myDeebotEcovacsPlatform.prototype = {
               'MotionService' + deebotName
             );
             HKMotionService.subtype = 'MotionService' + deebotName;
+            HKMotionService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKMotionService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              deebotName + ' needs attention'
+            );
             myDeebotEcovacsAccessory.addService(HKMotionService);
           }
           this.bindMotionCharacteristic(HKMotionService);
@@ -367,6 +360,11 @@ myDeebotEcovacsPlatform.prototype = {
               'SwitchAutoService' + deebotName
             );
             HKSwitchAutoService.subtype = 'SwitchAutoService' + deebotName;
+            HKSwitchAutoService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKSwitchAutoService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              'Auto ' + deebotName
+            );
             myDeebotEcovacsAccessory.addService(HKSwitchAutoService);
           }
           this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchAutoService, [
@@ -389,6 +387,11 @@ myDeebotEcovacsPlatform.prototype = {
               'SwitchEdgeService' + deebotName
             );
             HKSwitchEdgeService.subtype = 'SwitchEdgeService' + deebotName;
+            HKSwitchEdgeService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKSwitchEdgeService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              'Edge ' + deebotName
+            );
             myDeebotEcovacsAccessory.addService(HKSwitchEdgeService);
           }
           this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchEdgeService, [
@@ -411,6 +414,11 @@ myDeebotEcovacsPlatform.prototype = {
               'SwitchSpotService' + deebotName
             );
             HKSwitchSpotService.subtype = 'SwitchSpotService' + deebotName;
+            HKSwitchSpotService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+            HKSwitchSpotService.setCharacteristic(
+              Characteristic.ConfiguredName,
+              'Spot ' + deebotName
+            );
             myDeebotEcovacsAccessory.addService(HKSwitchSpotService);
           }
           this.bindSwitchOrderCharacteristic(myDeebotEcovacsAccessory, HKSwitchSpotService, [
@@ -496,7 +504,11 @@ myDeebotEcovacsPlatform.prototype = {
                   'SwitchSpotAreaService' + i + deebotName
                 );
                 HKSwitchSpotAreaService.subtype = 'SwitchSpotAreaService' + i + deebotName;
-
+                HKSwitchSpotAreaService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+                HKSwitchSpotAreaService.setCharacteristic(
+                  Characteristic.ConfiguredName,
+                  switchName
+                );
                 accessory.addService(HKSwitchSpotAreaService);
               }
 
@@ -600,6 +612,11 @@ myDeebotEcovacsPlatform.prototype = {
                   'SwitchCustomAreaService' + i + deebotName
                 );
                 HKSwitchCustomAreaService.subtype = 'SwitchCustomAreaService' + i + deebotName;
+                HKSwitchCustomAreaService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+                HKSwitchCustomAreaService.setCharacteristic(
+                  Characteristic.ConfiguredName,
+                  switchName
+                );
                 accessory.addService(HKSwitchCustomAreaService);
               }
 
@@ -611,6 +628,33 @@ myDeebotEcovacsPlatform.prototype = {
               this._confirmedServices.push(HKSwitchCustomAreaService);
             }
           }
+        }
+
+        if (this.publishFan) {
+          let HKFanService = myDeebotEcovacsAccessory.getServiceById(
+            'Start-Pause ' + deebotName,
+            'FanService' + deebotName
+          );
+
+          if (!HKFanService) {
+            this.log('INFO - Creating Fan Service for ' + deebotName);
+            HKFanService = new Service.Fan('Start-Pause ' + deebotName, 'FanService' + deebotName);
+            HKFanService.subtype = 'FanService' + deebotName;
+            myDeebotEcovacsAccessory.addService(HKFanService);
+          }
+
+          HKFanService.type = 'fan';
+
+          this.bindOnCharacteristic(myDeebotEcovacsAccessory, HKFanService);
+          this.bindRotationSpeedCharacteristic(myDeebotEcovacsAccessory, HKFanService);
+          HKFanService.setPrimaryService(true);
+          HKFanService.addOptionalCharacteristic(Characteristic.ConfiguredName);
+          HKFanService.setCharacteristic(
+            Characteristic.ConfiguredName,
+            'Start-Pause ' + deebotName
+          );
+          this._confirmedServices.push(HKFanService);
+          myDeebotEcovacsAccessory.HKFanService = HKFanService;
         }
 
         this.deebotEcovacsAPI.configureEvents(myDeebotEcovacsAccessory);
